@@ -145,8 +145,10 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
     並び順:
     <select id="sortSelect">
       <option value="num">店舗番号順</option>
-      <option value="day_desc">昼間人口(多い順)</option>
-      <option value="day_asc">昼間人口(少ない順)</option>
+      <option value="mesh_desc">500mメッシュ人口(多い順)</option>
+      <option value="mesh_asc">500mメッシュ人口(少ない順)</option>
+      <option value="day_desc">市区町村昼間人口(多い順)</option>
+      <option value="day_asc">市区町村昼間人口(少ない順)</option>
       <option value="ratio_desc">昼夜間比率(高い順)</option>
       <option value="ratio_asc">昼夜間比率(低い順)</option>
     </select>
@@ -212,6 +214,55 @@ const POPULATION = {
   "新潟市中央区":{night:180345,day:232902,ratio:129.1}
 };
 
+// 令和2年国勢調査 500mメッシュ 居住人口 (e-Stat CSV取得、メッシュコードは4次地域メッシュ)
+const MESH_POP = {
+  "1":{mesh:"523667004",pop:386},
+  "2":{mesh:"523857214",pop:947},
+  "3":{mesh:"523731431",pop:1253},
+  "4":{mesh:"523667001",pop:1880},
+  "5":{mesh:"523657723",pop:3633},
+  "6":{mesh:"523667011",pop:2036},
+  "7":{mesh:"523667031",pop:2230},
+  "8":{mesh:"523667774",pop:601},
+  "9":{mesh:"523666793",pop:2037},
+  "10":{mesh:"523536853",pop:4284},
+  "11":{mesh:"523657522",pop:440},
+  "12":{mesh:"533946323",pop:3904},
+  "13":{mesh:"503023444",pop:2519},
+  "14":{mesh:"523503684",pop:5056},
+  "15":{mesh:"533945764",pop:1342},
+  "16":{mesh:"523513333",pop:4119},
+  "17":{mesh:"513574104",pop:5212},
+  "18":{mesh:"523637973",pop:931},
+  "19":{mesh:"523740542",pop:1659},
+  "20":{mesh:"533953734",pop:2262},
+  "21":{mesh:"523514194",pop:2546},
+  "22":{mesh:"523546112",pop:1738},
+  "23":{mesh:"533947641",pop:7263},
+  "24":{mesh:"523514022",pop:5776},
+  "25":{mesh:"513565293",pop:1534},
+  "26":{mesh:"533944433",pop:3163},
+  "27":{mesh:"503067601",pop:839},
+  "28":{mesh:"523972972",pop:2511},
+  "29":{mesh:"523504302",pop:4996},
+  "30":{mesh:"533955674",pop:7661},
+  "31":{mesh:"523667001",pop:1880},
+  "32":{mesh:"523760123",pop:2682},
+  "33":{mesh:"523667021",pop:405},
+  "34":{mesh:"563960944",pop:1517},
+  "35":{mesh:"523657931",pop:3179},
+  "36":{mesh:"533946214",pop:1004},
+  "37":{mesh:"523656414",pop:1410},
+  "38":{mesh:"523502874",pop:3094},
+  "40":{mesh:"523545193",pop:4479},
+  "41":{mesh:"523657923",pop:1800},
+  "42":{mesh:"523657721",pop:2279},
+  "43":{mesh:"533946304",pop:2133},
+  "44":{mesh:"523716502",pop:64},
+  "45":{mesh:"523657973",pop:3352},
+  "46":{mesh:"523667021",pop:405}
+};
+
 const stores = [
   {name:"二兎", addr:"愛知県名古屋市中村区名駅2丁目42-7", num:"1", closed:false, muni:"名古屋市中村区"},
   {name:"おダシと銀しゃり中華そば 雲雀", addr:"静岡県駿東郡清水町八幡221-1", num:"2", closed:false, muni:"清水町"},
@@ -262,7 +313,10 @@ const stores = [
 ];
 
 // Attach population data to each store
-stores.forEach(s => { s.pop = POPULATION[s.muni] || null; });
+stores.forEach(s => {
+  s.pop = POPULATION[s.muni] || null;
+  s.mesh = MESH_POP[s.num] || null;
+});
 
 function getMarkerColor(store) {
   if (store.closed) return '#999';
@@ -362,6 +416,23 @@ function showSidebar(store) {
     ? '<span class="badge badge-closed">閉店</span>'
     : '<span class="badge badge-open">営業中</span>';
 
+  let meshHtml = '';
+  if (store.mesh) {
+    const m = store.mesh;
+    meshHtml = `
+      <div class="pop-card" style="border-left-color:#1976d2;margin-bottom:12px;">
+        <h4 style="color:#1976d2;">📍 店舗周辺 500mメッシュ 居住人口</h4>
+        <div class="pop-grid" style="grid-template-columns:1fr;">
+          <div class="pop-item" style="background:#e3f2fd;">
+            <div class="val" style="color:#1976d2;">${m.pop.toLocaleString()}<span style="font-size:12px;color:#666;"> 人</span></div>
+            <div class="lbl">500m × 500m 四方の居住人口</div>
+          </div>
+        </div>
+        <div class="pop-note">メッシュコード: ${m.mesh} (4次地域メッシュ)</div>
+        <div class="pop-note">出典: e-Stat 令和2年国勢調査 4次メッシュ 人口等基本集計</div>
+      </div>`;
+  }
+
   let popHtml = '';
   if (store.pop) {
     const p = store.pop;
@@ -404,6 +475,7 @@ function showSidebar(store) {
     <a href="${gmapsUrl}" target="_blank" class="google-link">Google Maps で開く</a>
     <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.addr)}"
        target="_blank" class="google-link" style="background:#34a853;margin-left:8px;">ルート検索</a>
+    ${meshHtml}
     ${popHtml}
   `;
   document.getElementById('sidebar').classList.add('open');
@@ -428,6 +500,8 @@ function renderList() {
   // Sort
   filtered.sort((a, b) => {
     switch(currentSort) {
+      case 'mesh_desc': return (b.mesh?.pop || 0) - (a.mesh?.pop || 0);
+      case 'mesh_asc': return (a.mesh?.pop || 0) - (b.mesh?.pop || 0);
       case 'day_desc': return (b.pop?.day || 0) - (a.pop?.day || 0);
       case 'day_asc': return (a.pop?.day || 0) - (b.pop?.day || 0);
       case 'ratio_desc': return (b.pop?.ratio || 0) - (a.pop?.ratio || 0);
@@ -439,12 +513,16 @@ function renderList() {
   filtered.forEach(s => {
     const div = document.createElement('div');
     div.className = 'store-item' + (s.closed ? ' closed' : '');
+    const meshText = s.mesh
+      ? `📍 500m圏内 居住人口 ${s.mesh.pop.toLocaleString()}人`
+      : '';
     const popText = s.pop
       ? `📊 ${s.muni} 昼間人口 ${s.pop.day.toLocaleString()}人 (昼夜比${s.pop.ratio}%)`
       : '';
     div.innerHTML = `
       <div class="name">No.${s.num} ${s.name}</div>
       <div class="addr">${s.addr}</div>
+      ${meshText ? `<div class="pop-info" style="color:#1976d2;">${meshText}</div>` : ''}
       ${popText ? `<div class="pop-info">${popText}</div>` : ''}
     `;
     div.onclick = () => {
