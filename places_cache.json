@@ -3298,23 +3298,6 @@
     },
     "ramen": []
   },
-  "45": {
-    "self": {
-      "place_id": "ChIJe2M7MODQGGAR4gRw120Yd9E",
-      "google_name": "中華そば四つ葉",
-      "rating": 4,
-      "reviews": 3469,
-      "address": "日本、〒350-0158 埼玉県比企郡川島町伊草２９８"
-    },
-    "station": {
-      "name": "千種駅",
-      "distance": 3169,
-      "walkMin": 40,
-      "lat": 35.1701666,
-      "lng": 136.9306621
-    },
-    "ramen": []
-  },
   "46": {
     "self": null,
     "station": {
