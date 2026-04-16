@@ -78,8 +78,42 @@ def fetch(url):
         return json.loads(r.read())
 
 
-def _try_place_search(query, lat, lng, max_dist=300):
-    """指定座標からmax_dist m以内の検索結果を返す"""
+import re
+
+def _name_similarity(search_name, google_name):
+    """店名の類似度チェック: 検索語の固有名キーワードがGoogle結果に含まれているか。
+    「麺屋」「ラーメン」などジェネリック語は除外して判定。"""
+    if not search_name or not google_name:
+        return False
+    # ジェネリック語 (これらのみ一致でもダメ、固有名が必要)
+    generic = {
+        '麺屋', '麺処', '麺や', '麺家', '麺亭',
+        'らーめん', 'ラーメン', 'らぁ麺', 'らー麺', 'らぅめん',
+        '中華そば', '中華蕎麦', '中華ソバ',
+        'つけ麺', 'つけめん', 'ツケメン',
+        '拉麺', '拉めん',
+        '担々麺', '担担麺', '坦々麺',
+        '油そば', 'めん処', 'めん屋',
+        'ramen', 'Ramen', 'RAMEN', 'noodle', 'Noodle',
+        '豚ラーメン', '肉玉中華そば', '背脂醤油',
+        'おダシと銀しゃり', '濃厚豚骨ラーメン'
+    }
+    # 記号・スペースで分割してキーワード抽出 (2文字以上)
+    kws = [k for k in re.split(r'[\s\-‐・,.、。「」【】（）()【】\[\]]+', search_name) if len(k) >= 2]
+    # 固有名 (ジェネリックでない) キーワード
+    unique_kws = [k for k in kws if k not in generic]
+    if not unique_kws:
+        # 固有名がない場合は全キーワードで判定
+        unique_kws = kws
+    google_lower = google_name.lower()
+    for kw in unique_kws:
+        if kw.lower() in google_lower:
+            return True
+    return False
+
+
+def _try_place_search(query, orig_name, lat, lng, max_dist=300):
+    """指定座標からmax_dist m以内 + 名前類似性のある検索結果を返す"""
     # findplacefromtext
     url = (f"https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
            f"?input={query}&inputtype=textquery"
@@ -92,7 +126,7 @@ def _try_place_search(query, lat, lng, max_dist=300):
         loc = c.get('geometry', {}).get('location', {})
         if loc:
             dist = haversine(lat, lng, loc['lat'], loc['lng'])
-            if dist <= max_dist:
+            if dist <= max_dist and _name_similarity(orig_name, c.get('name', '')):
                 return c, dist
     # Text Search
     url2 = (f"https://maps.googleapis.com/maps/api/place/textsearch/json"
@@ -104,18 +138,17 @@ def _try_place_search(query, lat, lng, max_dist=300):
             loc = c.get('geometry', {}).get('location', {})
             if loc:
                 dist = haversine(lat, lng, loc['lat'], loc['lng'])
-                if dist <= max_dist:
+                if dist <= max_dist and _name_similarity(orig_name, c.get('name', '')):
                     return c, dist
     return None, None
 
 
 def get_self(name, lat, lng):
     """店舗自身のGoogle Places情報を取得 (★, レビュー数)
-    座標から200m以内にマッチしたもののみ採用。
-    失敗したら "ラーメン {name}" で再検索。
+    座標から200m以内 かつ 名前類似性のあるもののみ採用。
     """
     for query in [name, f"ラーメン {name}", f"{name} ラーメン"]:
-        c, dist = _try_place_search(query, lat, lng, max_dist=200)
+        c, dist = _try_place_search(query, name, lat, lng, max_dist=200)
         if c:
             return {
                 'place_id': c.get('place_id', ''),
