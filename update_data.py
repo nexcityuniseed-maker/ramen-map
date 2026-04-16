@@ -158,26 +158,54 @@ def get_ramen(lat, lng, exclude_name):
     # 自店除外 (名前の一部一致)
     words = [w for w in exclude_name.split(' ') if len(w) >= 2]
     # ラーメン店判定キーワード (名前に含まれる必要あり)
-    ramen_kws = ['ラーメン', 'らーめん', 'ラァメン', 'らぁ麺', 'らー麺',
-                 '拉麺', '拉めん', '担々麺', '担担麺', '坦々麺',
-                 '中華そば', '中華蕎麦', '中華ソバ',
-                 '麺屋', '麺処', '麺や', '麺家', 'めん屋', 'めん処',
-                 'つけ麺', 'つけめん', 'ツケメン', '油そば',
-                 '家系', '二郎', '幸楽苑', '日高屋', '天下一品', '一蘭', '一風堂',
-                 'Ramen', 'ramen', 'noodle', 'Noodle', 'NOODLE']
+    ramen_kws = [
+        # 麺系 (広くカバー)
+        '麺', 'めん', 'メン',
+        # ラーメン系
+        'ラーメン', 'らーめん', 'ラァメン', 'ラァーメン', 'らぅめん', 'らー麺', 'らぁ麺',
+        # 中華そば
+        '中華そば', '中華蕎麦', '中華ソバ',
+        # その他
+        '拉麺', '拉めん', '担々麺', '担担麺', '坦々麺', '油そば',
+        'つけ麺', 'つけめん', 'ツケメン',
+        # 有名チェーン (麺が名前に含まれないもの)
+        '家系', '二郎', '幸楽苑', '日高屋', '天下一品', '一蘭', '一風堂',
+        '来来亭', '藤一番', 'くるまや', '山岡家', '一刻魁堂', '町田商店',
+        'ラァメン 花月', 'ちゃぶ屋', 'スガキヤ', 'らぁめん',
+        # 英語
+        'Ramen', 'ramen', 'noodle', 'Noodle', 'NOODLE'
+    ]
+    # 除外キーワード (ラーメン店ではない)
+    exclude_kws = [
+        'うどん', 'きしめん', 'そうめん', '製麺', '製粉',
+        'そば処', 'そば店', 'そば屋', 'そばや', '蕎麦処', '蕎麦店', '蕎麦屋',
+        'パスタ', 'スパゲティ', 'pasta', 'Pasta', 'PASTA',
+        'udon', 'Udon', 'UDON', 'soba', 'Soba', 'SOBA',
+        'ピザ', 'Pizza', 'PIZZA', 'カフェ', 'Cafe', 'CAFE', 'Café',
+        '焼肉', '焼鳥', '焼き鳥', 'ホルモン'
+    ]
 
     for p in d.get('results', []):
         name = p.get('name', '')
         # 自店舗除外
         if any(w in name for w in words):
             continue
-        # ラーメン店のみ (名前判定)
-        if not any(kw in name for kw in ramen_kws):
+        # ラーメン系キーワードが含まれるか
+        has_ramen = any(kw in name for kw in ramen_kws)
+        # 除外キーワードが含まれるか
+        has_exclude = any(kw in name for kw in exclude_kws)
+        # 除外があり、ラーメン系が明示的にないならスキップ
+        if has_exclude and not ('ラーメン' in name or 'らーめん' in name or '中華そば' in name):
+            continue
+        if not has_ramen:
             continue
 
         plat = p['geometry']['location']['lat']
         plng = p['geometry']['location']['lng']
         dist = haversine(lat, lng, plat, plng)
+        # 500m超は除外 (GoogleのradiusはHintにすぎない)
+        if dist > 500:
+            continue
         results.append({
             'name': name,
             'distance': dist,
