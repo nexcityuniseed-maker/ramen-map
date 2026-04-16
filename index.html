@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ラーメン店舗マップ</title>
+<title>ラーメン店舗マップ | 昼間人口分析</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
 #map { width: 100%; height: 100vh; }
 .sidebar {
-  position: fixed; top: 0; right: 0; width: 380px; height: 100vh;
+  position: fixed; top: 0; right: 0; width: 400px; height: 100vh;
   background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.15);
   overflow-y: auto; z-index: 10; display: none;
 }
 .sidebar.open { display: block; }
 .sidebar-header {
   position: sticky; top: 0; background: #d32f2f; color: #fff;
-  padding: 16px; display: flex; justify-content: space-between; align-items: center;
+  padding: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 2;
 }
 .sidebar-header h2 { font-size: 16px; }
 .close-btn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
@@ -30,8 +30,27 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
   border-radius: 6px; font-size: 14px; transition: background 0.2s;
 }
 .google-link:hover { background: #3367d6; }
+.pop-card {
+  margin-top: 16px; padding: 14px; background: #f5f5f5; border-radius: 8px;
+  border-left: 4px solid #d32f2f;
+}
+.pop-card h4 { font-size: 14px; color: #d32f2f; margin-bottom: 10px; }
+.pop-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.pop-item {
+  background: #fff; padding: 10px; border-radius: 6px; text-align: center;
+}
+.pop-item .val { font-size: 18px; font-weight: bold; color: #333; }
+.pop-item .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+.pop-ratio-bar {
+  margin-top: 10px; background: #fff; padding: 10px; border-radius: 6px;
+}
+.ratio-bar-bg { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 6px; }
+.ratio-bar-fill { height: 100%; transition: width 0.3s; }
+.pop-note { font-size: 11px; color: #999; margin-top: 8px; font-style: italic; }
 .store-list-panel {
-  position: fixed; top: 10px; left: 10px; width: 320px; max-height: 90vh;
+  position: fixed; top: 10px; left: 10px; width: 340px; max-height: 90vh;
   background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
   z-index: 10; overflow: hidden; display: flex; flex-direction: column;
 }
@@ -56,6 +75,12 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
   background: #fff; font-size: 12px; cursor: pointer; transition: all 0.2s;
 }
 .filter-btn.active { background: #d32f2f; color: #fff; border-color: #d32f2f; }
+.sort-bar {
+  padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 12px; color: #666;
+}
+.sort-bar select {
+  margin-left: 6px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;
+}
 .store-list {
   overflow-y: auto; flex: 1;
 }
@@ -66,6 +91,9 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
 .store-item:hover { background: #fff3f3; }
 .store-item .name { font-weight: bold; color: #333; }
 .store-item .addr { color: #888; font-size: 12px; margin-top: 2px; }
+.store-item .pop-info {
+  font-size: 11px; color: #d32f2f; margin-top: 4px; font-weight: 500;
+}
 .store-item.closed { opacity: 0.5; }
 .store-item.closed .name::after {
   content: ' [閉店]'; color: #999; font-size: 11px;
@@ -86,6 +114,17 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
   border-radius: 8px; cursor: pointer; font-size: 14px; display: none;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
+.legend {
+  position: fixed; bottom: 20px; right: 20px; background: #fff;
+  padding: 12px 14px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  font-size: 12px; z-index: 5;
+}
+.legend h5 { font-size: 13px; margin-bottom: 8px; color: #333; }
+.legend-item { display: flex; align-items: center; margin: 4px 0; }
+.legend-circle {
+  width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
 </style>
 </head>
 <body>
@@ -93,7 +132,7 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
 <div id="map"></div>
 
 <div class="store-list-panel" id="listPanel">
-  <div class="panel-header">ラーメン店舗一覧</div>
+  <div class="panel-header">ラーメン店舗 × 昼間人口</div>
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="店舗名・住所で検索...">
   </div>
@@ -102,11 +141,30 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
     <button class="filter-btn" data-filter="open">営業中</button>
     <button class="filter-btn" data-filter="closed">閉店</button>
   </div>
+  <div class="sort-bar">
+    並び順:
+    <select id="sortSelect">
+      <option value="num">店舗番号順</option>
+      <option value="day_desc">昼間人口(多い順)</option>
+      <option value="day_asc">昼間人口(少ない順)</option>
+      <option value="ratio_desc">昼夜間比率(高い順)</option>
+      <option value="ratio_asc">昼夜間比率(低い順)</option>
+    </select>
+  </div>
   <div class="stats" id="stats"></div>
   <div class="store-list" id="storeList"></div>
 </div>
 
 <button class="toggle-list" id="toggleList" onclick="togglePanel()">店舗一覧</button>
+
+<div class="legend">
+  <h5>マーカー凡例 (昼間人口)</h5>
+  <div class="legend-item"><span class="legend-circle" style="background:#b71c1c"></span>50万人以上</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#d32f2f"></span>20万〜50万人</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#f57c00"></span>10万〜20万人</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#fbc02d"></span>10万人未満</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#999"></span>閉店</div>
+</div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
@@ -117,57 +175,116 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
 </div>
 
 <script>
+// 令和2年国勢調査 昼間人口データ (e-Stat API取得)
+const POPULATION = {
+  "名古屋市中村区":{night:138599,day:239848,ratio:173.1},
+  "名古屋市中区":{night:93100,day:294608,ratio:316.4},
+  "名古屋市熱田区":{night:66957,day:87830,ratio:131.2},
+  "名古屋市千種区":{night:165245,day:177394,ratio:107.4},
+  "岡崎市":{night:384654,day:365085,ratio:94.9},
+  "春日井市":{night:308681,day:281390,ratio:91.2},
+  "北名古屋市":{night:86385,day:77622,ratio:89.9},
+  "長久手市":{night:60162,day:63489,ratio:105.5},
+  "豊田市":{night:422330,day:469093,ratio:111.1},
+  "東浦町":{night:49596,day:41183,ratio:83.0},
+  "蟹江町":{night:37338,day:30409,ratio:81.4},
+  "清水町":{night:31710,day:30482,ratio:96.1},
+  "浜松市浜名区":{night:98779,day:89910,ratio:91.0,note:"令和2年時点は浜北区"},
+  "京都市山科区":{night:135101,day:124517,ratio:92.2},
+  "京都市中京区":{night:110488,day:152398,ratio:137.9},
+  "千代田区":{night:66680,day:903780,ratio:1355.4},
+  "豊島区":{night:301599,day:412070,ratio:136.6},
+  "武蔵野市":{night:150149,day:162221,ratio:108.0},
+  "大阪市淀川区":{night:183444,day:226413,ratio:123.4},
+  "大阪市住吉区":{night:153056,day:140933,ratio:92.1},
+  "大阪市北区":{night:139376,day:420354,ratio:301.6},
+  "大阪市東淀川区":{night:177120,day:168784,ratio:95.3},
+  "福岡市南区":{night:265583,day:227314,ratio:85.6},
+  "北九州市小倉北区":{night:183407,day:221874,ratio:121.0},
+  "寝屋川市":{night:229733,day:203414,ratio:88.5},
+  "大和高田市":{night:61744,day:54235,ratio:87.8},
+  "市川市":{night:496676,day:401213,ratio:80.8},
+  "川口市":{night:594274,day:490197,ratio:82.5},
+  "所沢市":{night:342464,day:298938,ratio:87.3},
+  "平塚市":{night:258422,day:255152,ratio:98.7},
+  "西宮市":{night:485587,day:430122,ratio:88.6},
+  "伊丹市":{night:198138,day:184573,ratio:93.2},
+  "新潟市中央区":{night:180345,day:232902,ratio:129.1}
+};
+
 const stores = [
-  {name:"二兎", addr:"愛知県名古屋市中村区名駅2丁目42-7", num:"1", closed:false},
-  {name:"おダシと銀しゃり中華そば 雲雀", addr:"静岡県駿東郡清水町八幡221-1", num:"2", closed:false},
-  {name:"中華そばおにぎり 番い", addr:"愛知県岡崎市明大寺町川端6", num:"3", closed:false},
-  {name:"中華そば 雷杏", addr:"愛知県名古屋市中村区椿町4-12", num:"4", closed:false},
-  {name:"中華そば 朧月", addr:"愛知県名古屋市中区平和1丁目15-25", num:"5", closed:false},
-  {name:"肉玉中華そば 轟", addr:"愛知県名古屋市中村区名駅南1丁目16-17", num:"6", closed:false},
-  {name:"ダシと麺 くじら", addr:"名古屋市中区新栄町3丁目4-1", num:"7", closed:false},
-  {name:"穂稀", addr:"愛知県春日井市下条町1-2-2", num:"8", closed:false},
-  {name:"豚ラーメン 一歩前へ", addr:"愛知県春日井市下条町1-2-2", num:"8", closed:false},
-  {name:"中華そば 一閃", addr:"愛知県北名古屋市九之坪梅田53-1", num:"9", closed:false},
-  {name:"中華そばおにぎり ◯△", addr:"京都府京都市山科区竹鼻竹ノ街道町35-32", num:"10", closed:false},
-  {name:"中華そば レンゲ", addr:"愛知県名古屋市熱田区神宮3丁目7-1", num:"11", closed:false},
-  {name:"連獅子", addr:"東京都千代田区神田佐久間町3-1", num:"12", closed:true},
-  {name:"福岡 とら松", addr:"福岡県福岡市南区曰佐4丁目39-30", num:"13", closed:true},
-  {name:"中華そば 那由多", addr:"大阪市淀川区十三東3-28-14", num:"14", closed:false},
-  {name:"中華そば 麒麟", addr:"東京都豊島区池袋2丁目4-3", num:"15", closed:false},
-  {name:"中華そば たけ虎", addr:"兵庫県伊丹市中央2-1-1", num:"16", closed:false},
-  {name:"中華そば 三ノル", addr:"大阪市住吉区我孫子東2-9-7", num:"17", closed:false},
-  {name:"らぁ麺 ほたる", addr:"愛知県知多郡東浦町森岡柳ケ坪4-1", num:"18", closed:false},
-  {name:"中華そば 桜花", addr:"愛知県豊田市西岡町保ケ山56-1", num:"19", closed:false},
-  {name:"らぁ麺 ひよこ", addr:"埼玉県所沢市東狭山ケ丘6丁目802-5", num:"20", closed:false},
-  {name:"おダシと銀しゃり 中華そば 虹空", addr:"大阪府寝屋川市早子町2-20", num:"21", closed:false},
-  {name:"中華そば らんたん", addr:"京都府京都市中京区上大阪町528", num:"22", closed:false},
-  {name:"おダシと銀しゃり 中華そば 無作", addr:"千葉県市川市南八幡3-8-9", num:"23", closed:false},
-  {name:"おダシと銀しゃり 中華そば 上々", addr:"大阪市東淀川区小松1-4-27", num:"24", closed:false},
-  {name:"おダシと銀しゃり 中華そば 蒼し", addr:"奈良県大和高田市神楽2丁目13-40", num:"25", closed:false},
-  {name:"中華そば 樹々 kiki", addr:"東京都武蔵野市境2-3-20", num:"26", closed:true},
-  {name:"つけ麺・鶏そば 鯔背ヤ", addr:"北九州市小倉北区京町一丁目3番7号", num:"27", closed:false},
-  {name:"おダシと銀しゃり 中華そば 新た", addr:"神奈川県平塚市紅谷町9-12", num:"28", closed:false},
-  {name:"背脂醤油 ラーメン庄兵衛", addr:"大阪府大阪市北区天神橋2丁目2-8", num:"29", closed:false},
-  {name:"おダシと銀しゃり 中華そば 花道", addr:"埼玉県川口市幸町2-8-27", num:"30", closed:false},
-  {name:"放課後いつもの場所で", addr:"愛知県名古屋市中村区椿町4-12", num:"31", closed:false},
-  {name:"中華そば・つけ麺 日はまた昇る", addr:"愛知県長久手市五合池1413番地", num:"32", closed:false},
-  {name:"ラーメン・つけめん 藤虎", addr:"名古屋市中区錦2-13-25", num:"33", closed:false},
-  {name:"夢にカケハシ 響けハレノヒ", addr:"新潟県新潟市中央区東大通1-7-7", num:"34", closed:false},
-  {name:"豚ラーメン おはよう世界", addr:"愛知県名古屋市中区千代田5丁目15-12", num:"35", closed:false},
-  {name:"濃厚豚骨ラーメン 豚と小麦", addr:"東京都千代田区鍛冶町1-5-1", num:"36", closed:false},
-  {name:"豚ラーメン サブロー", addr:"愛知県海部郡蟹江町富吉4丁目126", num:"37", closed:false},
-  {name:"ラーメン・つけめん 刻々", addr:"兵庫県西宮市池田町7-7", num:"38", closed:false},
-  {name:"麺屋 啜る", addr:"京都府京都市中京区聚楽廻南町1-9", num:"40", closed:false},
-  {name:"麺屋 華山", addr:"愛知県名古屋市中区栄3丁目12-14", num:"41", closed:false},
-  {name:"熊猫商店", addr:"愛知県名古屋市中区金山1-18-8", num:"42", closed:false},
-  {name:"豚大学 ラーメン学部", addr:"東京都千代田区神田神保町1-8", num:"43", closed:false},
-  {name:"中華そば・つけ麺 ひばり食堂", addr:"静岡県浜松市浜名区平口2861-1", num:"44", closed:false},
-  {name:"中華そば よつ葉", addr:"名古屋市千種区東山通1-33", num:"45", closed:false},
-  {name:"麺屋 才門-SIMON-", addr:"名古屋市中区錦", num:"46", closed:false}
+  {name:"二兎", addr:"愛知県名古屋市中村区名駅2丁目42-7", num:"1", closed:false, muni:"名古屋市中村区"},
+  {name:"おダシと銀しゃり中華そば 雲雀", addr:"静岡県駿東郡清水町八幡221-1", num:"2", closed:false, muni:"清水町"},
+  {name:"中華そばおにぎり 番い", addr:"愛知県岡崎市明大寺町川端6", num:"3", closed:false, muni:"岡崎市"},
+  {name:"中華そば 雷杏", addr:"愛知県名古屋市中村区椿町4-12", num:"4", closed:false, muni:"名古屋市中村区"},
+  {name:"中華そば 朧月", addr:"愛知県名古屋市中区平和1丁目15-25", num:"5", closed:false, muni:"名古屋市中区"},
+  {name:"肉玉中華そば 轟", addr:"愛知県名古屋市中村区名駅南1丁目16-17", num:"6", closed:false, muni:"名古屋市中村区"},
+  {name:"ダシと麺 くじら", addr:"名古屋市中区新栄町3丁目4-1", num:"7", closed:false, muni:"名古屋市中区"},
+  {name:"穂稀", addr:"愛知県春日井市下条町1-2-2", num:"8", closed:false, muni:"春日井市"},
+  {name:"豚ラーメン 一歩前へ", addr:"愛知県春日井市下条町1-2-2", num:"8", closed:false, muni:"春日井市"},
+  {name:"中華そば 一閃", addr:"愛知県北名古屋市九之坪梅田53-1", num:"9", closed:false, muni:"北名古屋市"},
+  {name:"中華そばおにぎり ◯△", addr:"京都府京都市山科区竹鼻竹ノ街道町35-32", num:"10", closed:false, muni:"京都市山科区"},
+  {name:"中華そば レンゲ", addr:"愛知県名古屋市熱田区神宮3丁目7-1", num:"11", closed:false, muni:"名古屋市熱田区"},
+  {name:"連獅子", addr:"東京都千代田区神田佐久間町3-1", num:"12", closed:true, muni:"千代田区"},
+  {name:"福岡 とら松", addr:"福岡県福岡市南区曰佐4丁目39-30", num:"13", closed:true, muni:"福岡市南区"},
+  {name:"中華そば 那由多", addr:"大阪市淀川区十三東3-28-14", num:"14", closed:false, muni:"大阪市淀川区"},
+  {name:"中華そば 麒麟", addr:"東京都豊島区池袋2丁目4-3", num:"15", closed:false, muni:"豊島区"},
+  {name:"中華そば たけ虎", addr:"兵庫県伊丹市中央2-1-1", num:"16", closed:false, muni:"伊丹市"},
+  {name:"中華そば 三ノル", addr:"大阪市住吉区我孫子東2-9-7", num:"17", closed:false, muni:"大阪市住吉区"},
+  {name:"らぁ麺 ほたる", addr:"愛知県知多郡東浦町森岡柳ケ坪4-1", num:"18", closed:false, muni:"東浦町"},
+  {name:"中華そば 桜花", addr:"愛知県豊田市西岡町保ケ山56-1", num:"19", closed:false, muni:"豊田市"},
+  {name:"らぁ麺 ひよこ", addr:"埼玉県所沢市東狭山ケ丘6丁目802-5", num:"20", closed:false, muni:"所沢市"},
+  {name:"おダシと銀しゃり 中華そば 虹空", addr:"大阪府寝屋川市早子町2-20", num:"21", closed:false, muni:"寝屋川市"},
+  {name:"中華そば らんたん", addr:"京都府京都市中京区上大阪町528", num:"22", closed:false, muni:"京都市中京区"},
+  {name:"おダシと銀しゃり 中華そば 無作", addr:"千葉県市川市南八幡3-8-9", num:"23", closed:false, muni:"市川市"},
+  {name:"おダシと銀しゃり 中華そば 上々", addr:"大阪市東淀川区小松1-4-27", num:"24", closed:false, muni:"大阪市東淀川区"},
+  {name:"おダシと銀しゃり 中華そば 蒼し", addr:"奈良県大和高田市神楽2丁目13-40", num:"25", closed:false, muni:"大和高田市"},
+  {name:"中華そば 樹々 kiki", addr:"東京都武蔵野市境2-3-20", num:"26", closed:true, muni:"武蔵野市"},
+  {name:"つけ麺・鶏そば 鯔背ヤ", addr:"北九州市小倉北区京町一丁目3番7号", num:"27", closed:false, muni:"北九州市小倉北区"},
+  {name:"おダシと銀しゃり 中華そば 新た", addr:"神奈川県平塚市紅谷町9-12", num:"28", closed:false, muni:"平塚市"},
+  {name:"背脂醤油 ラーメン庄兵衛", addr:"大阪府大阪市北区天神橋2丁目2-8", num:"29", closed:false, muni:"大阪市北区"},
+  {name:"おダシと銀しゃり 中華そば 花道", addr:"埼玉県川口市幸町2-8-27", num:"30", closed:false, muni:"川口市"},
+  {name:"放課後いつもの場所で", addr:"愛知県名古屋市中村区椿町4-12", num:"31", closed:false, muni:"名古屋市中村区"},
+  {name:"中華そば・つけ麺 日はまた昇る", addr:"愛知県長久手市五合池1413番地", num:"32", closed:false, muni:"長久手市"},
+  {name:"ラーメン・つけめん 藤虎", addr:"名古屋市中区錦2-13-25", num:"33", closed:false, muni:"名古屋市中区"},
+  {name:"夢にカケハシ 響けハレノヒ", addr:"新潟県新潟市中央区東大通1-7-7", num:"34", closed:false, muni:"新潟市中央区"},
+  {name:"豚ラーメン おはよう世界", addr:"愛知県名古屋市中区千代田5丁目15-12", num:"35", closed:false, muni:"名古屋市中区"},
+  {name:"濃厚豚骨ラーメン 豚と小麦", addr:"東京都千代田区鍛冶町1-5-1", num:"36", closed:false, muni:"千代田区"},
+  {name:"豚ラーメン サブロー", addr:"愛知県海部郡蟹江町富吉4丁目126", num:"37", closed:false, muni:"蟹江町"},
+  {name:"ラーメン・つけめん 刻々", addr:"兵庫県西宮市池田町7-7", num:"38", closed:false, muni:"西宮市"},
+  {name:"麺屋 啜る", addr:"京都府京都市中京区聚楽廻南町1-9", num:"40", closed:false, muni:"京都市中京区"},
+  {name:"麺屋 華山", addr:"愛知県名古屋市中区栄3丁目12-14", num:"41", closed:false, muni:"名古屋市中区"},
+  {name:"熊猫商店", addr:"愛知県名古屋市中区金山1-18-8", num:"42", closed:false, muni:"名古屋市中区"},
+  {name:"豚大学 ラーメン学部", addr:"東京都千代田区神田神保町1-8", num:"43", closed:false, muni:"千代田区"},
+  {name:"中華そば・つけ麺 ひばり食堂", addr:"静岡県浜松市浜名区平口2861-1", num:"44", closed:false, muni:"浜松市浜名区"},
+  {name:"中華そば よつ葉", addr:"名古屋市千種区東山通1-33", num:"45", closed:false, muni:"名古屋市千種区"},
+  {name:"麺屋 才門-SIMON-", addr:"名古屋市中区錦", num:"46", closed:false, muni:"名古屋市中区"}
 ];
+
+// Attach population data to each store
+stores.forEach(s => { s.pop = POPULATION[s.muni] || null; });
+
+function getMarkerColor(store) {
+  if (store.closed) return '#999';
+  if (!store.pop) return '#d32f2f';
+  const d = store.pop.day;
+  if (d >= 500000) return '#b71c1c';
+  if (d >= 200000) return '#d32f2f';
+  if (d >= 100000) return '#f57c00';
+  return '#fbc02d';
+}
+
+function getRatioColor(ratio) {
+  if (ratio >= 200) return '#b71c1c';
+  if (ratio >= 120) return '#d32f2f';
+  if (ratio >= 100) return '#f57c00';
+  if (ratio >= 90) return '#fbc02d';
+  return '#757575';
+}
 
 let map, markers = [], infoWindow, geocoder;
 let currentFilter = 'all';
+let currentSort = 'num';
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -187,6 +304,7 @@ function initMap() {
   function geocodeNext() {
     if (geocodeIdx >= stores.length) {
       map.fitBounds(bounds);
+      renderList();
       return;
     }
     const store = stores[geocodeIdx];
@@ -198,7 +316,6 @@ function initMap() {
         const pos = results[0].geometry.location;
         store.lat = pos.lat();
         store.lng = pos.lng();
-        const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.name + ' ' + store.addr)}`;
 
         const marker = new google.maps.Marker({
           position: pos,
@@ -206,11 +323,11 @@ function initMap() {
           title: store.name,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            fillColor: store.closed ? '#999' : '#d32f2f',
+            fillColor: getMarkerColor(store),
             fillOpacity: store.closed ? 0.5 : 0.9,
             strokeColor: '#fff',
             strokeWeight: 2,
-            scale: 10
+            scale: 11
           },
           label: {
             text: store.num,
@@ -225,36 +342,69 @@ function initMap() {
         bounds.extend(pos);
 
         marker.addListener('click', function() {
-          showSidebar(store, gmapsUrl);
+          showSidebar(store);
           map.panTo(pos);
-          map.setZoom(15);
+          map.setZoom(14);
         });
       }
-      setTimeout(geocodeNext, 200);
+      setTimeout(geocodeNext, 180);
     });
   }
 
   geocodeNext();
-  renderList();
   updateStats();
 }
 
-function showSidebar(store, gmapsUrl) {
+function showSidebar(store) {
+  const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.name + ' ' + store.addr)}`;
   document.getElementById('sidebarTitle').textContent = store.name;
   const statusBadge = store.closed
     ? '<span class="badge badge-closed">閉店</span>'
     : '<span class="badge badge-open">営業中</span>';
+
+  let popHtml = '';
+  if (store.pop) {
+    const p = store.pop;
+    const barColor = getRatioColor(p.ratio);
+    const barWidth = Math.min(p.ratio / 3, 100);
+    popHtml = `
+      <div class="pop-card">
+        <h4>📊 ${store.muni} の人口データ (令和2年国勢調査)</h4>
+        <div class="pop-grid">
+          <div class="pop-item">
+            <div class="val">${p.day.toLocaleString()}</div>
+            <div class="lbl">昼間人口</div>
+          </div>
+          <div class="pop-item">
+            <div class="val">${p.night.toLocaleString()}</div>
+            <div class="lbl">夜間人口</div>
+          </div>
+        </div>
+        <div class="pop-ratio-bar">
+          <div style="display:flex;justify-content:space-between;font-size:12px;">
+            <span><strong>昼夜間人口比率</strong></span>
+            <span style="color:${barColor};font-weight:bold;">${p.ratio}%</span>
+          </div>
+          <div class="ratio-bar-bg">
+            <div class="ratio-bar-fill" style="width:${barWidth}%;background:${barColor};"></div>
+          </div>
+          <div style="font-size:11px;color:#888;margin-top:4px;">
+            ${p.ratio >= 150 ? '💼 ビジネス・商業エリア(昼間人口が多い)' : p.ratio >= 105 ? '🏙️ 昼間流入エリア' : p.ratio >= 95 ? '⚖️ 昼夜バランス型' : '🏘️ ベッドタウン型(夜間人口が多い)'}
+          </div>
+        </div>
+        ${p.note ? `<div class="pop-note">※ ${p.note}</div>` : ''}
+        <div class="pop-note">出典: e-Stat 令和2年国勢調査 従業地・通学地集計</div>
+      </div>`;
+  }
+
   document.getElementById('sidebarContent').innerHTML = `
     <h3>No.${store.num} ${store.name} ${statusBadge}</h3>
     <p><span class="label">住所:</span><br>${store.addr}</p>
-    <a href="${gmapsUrl}" target="_blank" class="google-link">
-      Google Maps で開く
-    </a>
-    <br>
+    <p><span class="label">所在地:</span> ${store.muni}</p>
+    <a href="${gmapsUrl}" target="_blank" class="google-link">Google Maps で開く</a>
     <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.addr)}"
-       target="_blank" class="google-link" style="background:#34a853;margin-top:8px;">
-      ルート検索
-    </a>
+       target="_blank" class="google-link" style="background:#34a853;margin-left:8px;">ルート検索</a>
+    ${popHtml}
   `;
   document.getElementById('sidebar').classList.add('open');
 }
@@ -268,20 +418,40 @@ function renderList() {
   const list = document.getElementById('storeList');
   list.innerHTML = '';
 
-  stores.forEach((s, i) => {
-    if (currentFilter === 'open' && s.closed) return;
-    if (currentFilter === 'closed' && !s.closed) return;
-    if (query && !s.name.toLowerCase().includes(query) && !s.addr.toLowerCase().includes(query)) return;
+  let filtered = stores.filter(s => {
+    if (currentFilter === 'open' && s.closed) return false;
+    if (currentFilter === 'closed' && !s.closed) return false;
+    if (query && !s.name.toLowerCase().includes(query) && !s.addr.toLowerCase().includes(query) && !(s.muni||'').toLowerCase().includes(query)) return false;
+    return true;
+  });
 
+  // Sort
+  filtered.sort((a, b) => {
+    switch(currentSort) {
+      case 'day_desc': return (b.pop?.day || 0) - (a.pop?.day || 0);
+      case 'day_asc': return (a.pop?.day || 0) - (b.pop?.day || 0);
+      case 'ratio_desc': return (b.pop?.ratio || 0) - (a.pop?.ratio || 0);
+      case 'ratio_asc': return (a.pop?.ratio || 0) - (b.pop?.ratio || 0);
+      default: return parseInt(a.num) - parseInt(b.num);
+    }
+  });
+
+  filtered.forEach(s => {
     const div = document.createElement('div');
     div.className = 'store-item' + (s.closed ? ' closed' : '');
-    div.innerHTML = `<div class="name">No.${s.num} ${s.name}</div><div class="addr">${s.addr}</div>`;
+    const popText = s.pop
+      ? `📊 ${s.muni} 昼間人口 ${s.pop.day.toLocaleString()}人 (昼夜比${s.pop.ratio}%)`
+      : '';
+    div.innerHTML = `
+      <div class="name">No.${s.num} ${s.name}</div>
+      <div class="addr">${s.addr}</div>
+      ${popText ? `<div class="pop-info">${popText}</div>` : ''}
+    `;
     div.onclick = () => {
       if (s.lat) {
         map.panTo({ lat: s.lat, lng: s.lng });
-        map.setZoom(15);
-        const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + ' ' + s.addr)}`;
-        showSidebar(s, gmapsUrl);
+        map.setZoom(14);
+        showSidebar(s);
       }
     };
     list.appendChild(div);
@@ -295,6 +465,10 @@ function updateStats() {
 }
 
 document.getElementById('searchInput').addEventListener('input', renderList);
+document.getElementById('sortSelect').addEventListener('change', function() {
+  currentSort = this.value;
+  renderList();
+});
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', function() {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -315,6 +489,9 @@ function togglePanel() {
     btn.style.display = 'block';
   }
 }
+
+// Initial render before geocoding completes
+renderList();
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnK1j8iAoBggsdjUkXRzLrR6ok32bNA9w&callback=initMap" async defer></script>
