@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ラーメン店舗マップ</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
+#map { width: 100%; height: 100vh; }
+.sidebar {
+  position: fixed; top: 0; right: 0; width: 380px; height: 100vh;
+  background: #fff; box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+  overflow-y: auto; z-index: 10; display: none;
+}
+.sidebar.open { display: block; }
+.sidebar-header {
+  position: sticky; top: 0; background: #d32f2f; color: #fff;
+  padding: 16px; display: flex; justify-content: space-between; align-items: center;
+}
+.sidebar-header h2 { font-size: 16px; }
+.close-btn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+.store-info { padding: 16px; }
+.store-info h3 { color: #d32f2f; margin-bottom: 8px; font-size: 18px; }
+.store-info p { margin: 6px 0; font-size: 14px; color: #333; line-height: 1.6; }
+.store-info .label { font-weight: bold; color: #666; }
+.google-link {
+  display: inline-block; margin-top: 12px; padding: 10px 20px;
+  background: #4285f4; color: #fff; text-decoration: none;
+  border-radius: 6px; font-size: 14px; transition: background 0.2s;
+}
+.google-link:hover { background: #3367d6; }
+.store-list-panel {
+  position: fixed; top: 10px; left: 10px; width: 320px; max-height: 90vh;
+  background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  z-index: 10; overflow: hidden; display: flex; flex-direction: column;
+}
+.panel-header {
+  background: #d32f2f; color: #fff; padding: 14px 16px;
+  font-size: 16px; font-weight: bold;
+}
+.search-box {
+  padding: 8px 12px; border-bottom: 1px solid #eee;
+}
+.search-box input {
+  width: 100%; padding: 8px 12px; border: 1px solid #ddd;
+  border-radius: 4px; font-size: 14px; outline: none;
+}
+.search-box input:focus { border-color: #d32f2f; }
+.filter-bar {
+  display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+}
+.filter-btn {
+  padding: 4px 10px; border: 1px solid #ddd; border-radius: 16px;
+  background: #fff; font-size: 12px; cursor: pointer; transition: all 0.2s;
+}
+.filter-btn.active { background: #d32f2f; color: #fff; border-color: #d32f2f; }
+.store-list {
+  overflow-y: auto; flex: 1;
+}
+.store-item {
+  padding: 10px 16px; border-bottom: 1px solid #f0f0f0;
+  cursor: pointer; transition: background 0.2s; font-size: 13px;
+}
+.store-item:hover { background: #fff3f3; }
+.store-item .name { font-weight: bold; color: #333; }
+.store-item .addr { color: #888; font-size: 12px; margin-top: 2px; }
+.store-item.closed { opacity: 0.5; }
+.store-item.closed .name::after {
+  content: ' [閉店]'; color: #999; font-size: 11px;
+}
+.badge {
+  display: inline-block; padding: 2px 6px; border-radius: 3px;
+  font-size: 11px; margin-left: 6px;
+}
+.badge-closed { background: #eee; color: #999; }
+.badge-open { background: #e8f5e9; color: #2e7d32; }
+.stats {
+  padding: 8px 16px; background: #fafafa; border-bottom: 1px solid #eee;
+  font-size: 12px; color: #666;
+}
+.toggle-list {
+  position: fixed; top: 10px; left: 10px; z-index: 9;
+  background: #d32f2f; color: #fff; border: none; padding: 10px 16px;
+  border-radius: 8px; cursor: pointer; font-size: 14px; display: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="store-list-panel" id="listPanel">
+  <div class="panel-header">ラーメン店舗一覧</div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="店舗名・住所で検索...">
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">全店舗</button>
+    <button class="filter-btn" data-filter="open">営業中</button>
+    <button class="filter-btn" data-filter="closed">閉店</button>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="store-list" id="storeList"></div>
+</div>
+
+<button class="toggle-list" id="toggleList" onclick="togglePanel()">店舗一覧</button>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2 id="sidebarTitle">店舗詳細</h2>
+    <button class="close-btn" onclick="closeSidebar()">&times;</button>
+  </div>
+  <div class="store-info" id="sidebarContent"></div>
+</div>
+
+<script>
+const stores = [
+  {name:"二兎", addr:"愛知県名古屋市中村区名駅2丁目42-7", num:"1", closed:false},
+  {name:"おダシと銀しゃり中華そば 雲雀", addr:"静岡県駿東郡清水町八幡221-1", num:"2", closed:false},
+  {name:"中華そばおにぎり 番い", addr:"愛知県岡崎市明大寺町川端6", num:"3", closed:false},
+  {name:"中華そば 雷杏", addr:"愛知県名古屋市中村区椿町4-12", num:"4", closed:false},
+  {name:"中華そば 朧月", addr:"愛知県名古屋市中区平和1丁目15-25", num:"5", closed:false},
+  {name:"肉玉中華そば 轟", addr:"愛知県名古屋市中村区名駅南1丁目16-17", num:"6", closed:false},
+  {name:"ダシと麺 くじら", addr:"名古屋市中区新栄町3丁目4-1", num:"7", closed:false},
+  {name:"穂稀", addr:"愛知県春日井市下条町1-2-2", num:"8", closed:false},
+  {name:"豚ラーメン 一歩前へ", addr:"愛知県春日井市下条町1-2-2", num:"8", closed:false},
+  {name:"中華そば 一閃", addr:"愛知県北名古屋市九之坪梅田53-1", num:"9", closed:false},
+  {name:"中華そばおにぎり ◯△", addr:"京都府京都市山科区竹鼻竹ノ街道町35-32", num:"10", closed:false},
+  {name:"中華そば レンゲ", addr:"愛知県名古屋市熱田区神宮3丁目7-1", num:"11", closed:false},
+  {name:"連獅子", addr:"東京都千代田区神田佐久間町3-1", num:"12", closed:true},
+  {name:"福岡 とら松", addr:"福岡県福岡市南区曰佐4丁目39-30", num:"13", closed:true},
+  {name:"中華そば 那由多", addr:"大阪市淀川区十三東3-28-14", num:"14", closed:false},
+  {name:"中華そば 麒麟", addr:"東京都豊島区池袋2丁目4-3", num:"15", closed:false},
+  {name:"中華そば たけ虎", addr:"兵庫県伊丹市中央2-1-1", num:"16", closed:false},
+  {name:"中華そば 三ノル", addr:"大阪市住吉区我孫子東2-9-7", num:"17", closed:false},
+  {name:"らぁ麺 ほたる", addr:"愛知県知多郡東浦町森岡柳ケ坪4-1", num:"18", closed:false},
+  {name:"中華そば 桜花", addr:"愛知県豊田市西岡町保ケ山56-1", num:"19", closed:false},
+  {name:"らぁ麺 ひよこ", addr:"埼玉県所沢市東狭山ケ丘6丁目802-5", num:"20", closed:false},
+  {name:"おダシと銀しゃり 中華そば 虹空", addr:"大阪府寝屋川市早子町2-20", num:"21", closed:false},
+  {name:"中華そば らんたん", addr:"京都府京都市中京区上大阪町528", num:"22", closed:false},
+  {name:"おダシと銀しゃり 中華そば 無作", addr:"千葉県市川市南八幡3-8-9", num:"23", closed:false},
+  {name:"おダシと銀しゃり 中華そば 上々", addr:"大阪市東淀川区小松1-4-27", num:"24", closed:false},
+  {name:"おダシと銀しゃり 中華そば 蒼し", addr:"奈良県大和高田市神楽2丁目13-40", num:"25", closed:false},
+  {name:"中華そば 樹々 kiki", addr:"東京都武蔵野市境2-3-20", num:"26", closed:true},
+  {name:"つけ麺・鶏そば 鯔背ヤ", addr:"北九州市小倉北区京町一丁目3番7号", num:"27", closed:false},
+  {name:"おダシと銀しゃり 中華そば 新た", addr:"神奈川県平塚市紅谷町9-12", num:"28", closed:false},
+  {name:"背脂醤油 ラーメン庄兵衛", addr:"大阪府大阪市北区天神橋2丁目2-8", num:"29", closed:false},
+  {name:"おダシと銀しゃり 中華そば 花道", addr:"埼玉県川口市幸町2-8-27", num:"30", closed:false},
+  {name:"放課後いつもの場所で", addr:"愛知県名古屋市中村区椿町4-12", num:"31", closed:false},
+  {name:"中華そば・つけ麺 日はまた昇る", addr:"愛知県長久手市五合池1413番地", num:"32", closed:false},
+  {name:"ラーメン・つけめん 藤虎", addr:"名古屋市中区錦2-13-25", num:"33", closed:false},
+  {name:"夢にカケハシ 響けハレノヒ", addr:"新潟県新潟市中央区東大通1-7-7", num:"34", closed:false},
+  {name:"豚ラーメン おはよう世界", addr:"愛知県名古屋市中区千代田5丁目15-12", num:"35", closed:false},
+  {name:"濃厚豚骨ラーメン 豚と小麦", addr:"東京都千代田区鍛冶町1-5-1", num:"36", closed:false},
+  {name:"豚ラーメン サブロー", addr:"愛知県海部郡蟹江町富吉4丁目126", num:"37", closed:false},
+  {name:"ラーメン・つけめん 刻々", addr:"兵庫県西宮市池田町7-7", num:"38", closed:false},
+  {name:"麺屋 啜る", addr:"京都府京都市中京区聚楽廻南町1-9", num:"40", closed:false},
+  {name:"麺屋 華山", addr:"愛知県名古屋市中区栄3丁目12-14", num:"41", closed:false},
+  {name:"熊猫商店", addr:"愛知県名古屋市中区金山1-18-8", num:"42", closed:false},
+  {name:"豚大学 ラーメン学部", addr:"東京都千代田区神田神保町1-8", num:"43", closed:false},
+  {name:"中華そば・つけ麺 ひばり食堂", addr:"静岡県浜松市浜名区平口2861-1", num:"44", closed:false},
+  {name:"中華そば よつ葉", addr:"名古屋市千種区東山通1-33", num:"45", closed:false},
+  {name:"麺屋 才門-SIMON-", addr:"名古屋市中区錦", num:"46", closed:false}
+];
+
+let map, markers = [], infoWindow, geocoder;
+let currentFilter = 'all';
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 35.5, lng: 136.9 },
+    zoom: 6,
+    styles: [
+      {featureType:"poi", stylers:[{visibility:"off"}]},
+      {featureType:"transit", stylers:[{visibility:"simplified"}]}
+    ]
+  });
+  geocoder = new google.maps.Geocoder();
+  infoWindow = new google.maps.InfoWindow();
+
+  const bounds = new google.maps.LatLngBounds();
+  let geocodeIdx = 0;
+
+  function geocodeNext() {
+    if (geocodeIdx >= stores.length) {
+      map.fitBounds(bounds);
+      return;
+    }
+    const store = stores[geocodeIdx];
+    const idx = geocodeIdx;
+    geocodeIdx++;
+
+    geocoder.geocode({ address: store.addr, region: 'jp' }, function(results, status) {
+      if (status === 'OK') {
+        const pos = results[0].geometry.location;
+        store.lat = pos.lat();
+        store.lng = pos.lng();
+        const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.name + ' ' + store.addr)}`;
+
+        const marker = new google.maps.Marker({
+          position: pos,
+          map: map,
+          title: store.name,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: store.closed ? '#999' : '#d32f2f',
+            fillOpacity: store.closed ? 0.5 : 0.9,
+            strokeColor: '#fff',
+            strokeWeight: 2,
+            scale: 10
+          },
+          label: {
+            text: store.num,
+            color: '#fff',
+            fontSize: '10px',
+            fontWeight: 'bold'
+          }
+        });
+
+        marker.storeIndex = idx;
+        markers.push(marker);
+        bounds.extend(pos);
+
+        marker.addListener('click', function() {
+          showSidebar(store, gmapsUrl);
+          map.panTo(pos);
+          map.setZoom(15);
+        });
+      }
+      setTimeout(geocodeNext, 200);
+    });
+  }
+
+  geocodeNext();
+  renderList();
+  updateStats();
+}
+
+function showSidebar(store, gmapsUrl) {
+  document.getElementById('sidebarTitle').textContent = store.name;
+  const statusBadge = store.closed
+    ? '<span class="badge badge-closed">閉店</span>'
+    : '<span class="badge badge-open">営業中</span>';
+  document.getElementById('sidebarContent').innerHTML = `
+    <h3>No.${store.num} ${store.name} ${statusBadge}</h3>
+    <p><span class="label">住所:</span><br>${store.addr}</p>
+    <a href="${gmapsUrl}" target="_blank" class="google-link">
+      Google Maps で開く
+    </a>
+    <br>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.addr)}"
+       target="_blank" class="google-link" style="background:#34a853;margin-top:8px;">
+      ルート検索
+    </a>
+  `;
+  document.getElementById('sidebar').classList.add('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function renderList() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const list = document.getElementById('storeList');
+  list.innerHTML = '';
+
+  stores.forEach((s, i) => {
+    if (currentFilter === 'open' && s.closed) return;
+    if (currentFilter === 'closed' && !s.closed) return;
+    if (query && !s.name.toLowerCase().includes(query) && !s.addr.toLowerCase().includes(query)) return;
+
+    const div = document.createElement('div');
+    div.className = 'store-item' + (s.closed ? ' closed' : '');
+    div.innerHTML = `<div class="name">No.${s.num} ${s.name}</div><div class="addr">${s.addr}</div>`;
+    div.onclick = () => {
+      if (s.lat) {
+        map.panTo({ lat: s.lat, lng: s.lng });
+        map.setZoom(15);
+        const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.name + ' ' + s.addr)}`;
+        showSidebar(s, gmapsUrl);
+      }
+    };
+    list.appendChild(div);
+  });
+}
+
+function updateStats() {
+  const open = stores.filter(s => !s.closed).length;
+  const closed = stores.filter(s => s.closed).length;
+  document.getElementById('stats').textContent = `全${stores.length}店舗 / 営業中: ${open} / 閉店: ${closed}`;
+}
+
+document.getElementById('searchInput').addEventListener('input', renderList);
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    renderList();
+  });
+});
+
+function togglePanel() {
+  const panel = document.getElementById('listPanel');
+  const btn = document.getElementById('toggleList');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'flex';
+    btn.style.display = 'none';
+  } else {
+    panel.style.display = 'none';
+    btn.style.display = 'block';
+  }
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnK1j8iAoBggsdjUkXRzLrR6ok32bNA9w&callback=initMap" async defer></script>
+
+</body>
+</html>
