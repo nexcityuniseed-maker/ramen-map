@@ -141,7 +141,6 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
   </div>
   <div class="filter-bar">
     <button class="filter-btn active" data-filter="all">全店舗</button>
-    <button class="filter-btn" data-filter="open">営業中</button>
     <button class="filter-btn" data-filter="closed">閉店</button>
   </div>
   <div class="sort-bar">
@@ -552,7 +551,7 @@ function showSidebar(store) {
   document.getElementById('sidebarTitle').textContent = store.name;
   const statusBadge = store.closed
     ? '<span class="badge badge-closed">閉店</span>'
-    : '<span class="badge badge-open">営業中</span>';
+    : '';
 
   let meshHtml = '';
   if (store.mesh) {
