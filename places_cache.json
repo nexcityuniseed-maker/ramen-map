@@ -5,7 +5,8 @@
       "google_name": "おダシと銀しゃり 中華そば 二兎",
       "rating": 3.9,
       "reviews": 1184,
-      "address": "日本、〒450-0002 愛知県名古屋市中村区名駅２丁目４２−７"
+      "address": "日本、〒450-0002 愛知県名古屋市中村区名駅２丁目４２−７",
+      "match_distance": 21
     },
     "station": {
       "name": "名古屋駅",
@@ -103,95 +104,26 @@
       "google_name": "おダシと銀しゃり 中華そば 雲雀 -hibari-",
       "rating": 4.2,
       "reviews": 1169,
-      "address": "日本、〒432-8061 静岡県浜松市中央区入野町９３７−１"
+      "address": "日本、〒432-8061 静岡県浜松市中央区入野町９３７−１",
+      "match_distance": 0
     },
     "station": {
-      "name": "三島広小路駅",
-      "distance": 1840,
-      "walkMin": 23,
-      "lat": 35.1188861,
-      "lng": 138.9113541
+      "name": "高塚駅",
+      "distance": 1651,
+      "walkMin": 21,
+      "lat": 34.6904497,
+      "lng": 137.6810123
     },
     "ramen": [
       {
-        "name": "味噌らーめん 柿田川ひばり 清水町店",
-        "distance": 5,
-        "rating": 4,
-        "reviews": 513,
-        "vicinity": "清水町八幡２２１−１",
-        "lat": 35.1061003,
-        "lng": 138.8985919,
-        "place_id": "ChIJHX4WBFqRGWARkrufr5ZEQbk"
-      },
-      {
-        "name": "らーめん伽羅",
-        "distance": 224,
-        "rating": 4,
-        "reviews": 162,
-        "vicinity": "清水町柿田１３６−４１",
-        "lat": 35.1040353,
-        "lng": 138.8987027,
-        "place_id": "ChIJV9DzlhKQGWAR2SwW8gZ-g4s"
-      },
-      {
-        "name": "麺屋 なか川 本店",
-        "distance": 274,
-        "rating": 3.2,
-        "reviews": 160,
-        "vicinity": "清水町八幡１８２−１",
-        "lat": 35.1085116,
-        "lng": 138.8984745,
-        "place_id": "ChIJ1SLuK7-RGWARZ1fJvUEQfKA"
-      },
-      {
-        "name": "つけめんや Dots",
-        "distance": 365,
-        "rating": 4.1,
-        "reviews": 149,
-        "vicinity": "清水町八幡１６２−１",
-        "lat": 35.1091636,
-        "lng": 138.8973084,
-        "place_id": "ChIJrciMpPCRGWARYCZj_QV0dMM"
-      },
-      {
-        "name": "ラーメン ろたす",
-        "distance": 518,
-        "rating": 3.8,
-        "reviews": 941,
-        "vicinity": "清水町堂庭８−７",
-        "lat": 35.10517610000001,
-        "lng": 138.9041771,
-        "place_id": "ChIJXW3Yzm2QGWARs0dD1Wfx9AU"
-      },
-      {
-        "name": "ラーメン 猪のしし",
-        "distance": 537,
-        "rating": 4.2,
-        "reviews": 631,
-        "vicinity": "清水町堂庭５６−１４",
-        "lat": 35.1046218,
-        "lng": 138.9042302,
-        "place_id": "ChIJ-X9jM2yQGWARql9LisSmdgc"
-      },
-      {
-        "name": "ラーメン創房 玄",
-        "distance": 593,
-        "rating": 3.1,
-        "reviews": 40,
-        "vicinity": "清水町玉川６１−２ 本館",
-        "lat": 35.10916290000001,
-        "lng": 138.9038816,
-        "place_id": "ChIJ1VJDCXOQGWAR9rBkrceE2qU"
-      },
-      {
-        "name": "雪ん子らーめん",
-        "distance": 686,
-        "rating": 3.9,
-        "reviews": 623,
-        "vicinity": "清水町八幡４３−４",
-        "lat": 35.1094544,
-        "lng": 138.8923025,
-        "place_id": "ChIJKYQyUgiQGWARMfPKN6191Tw"
+        "name": "横浜家系ラーメン 麺匠家 西伊場店",
+        "distance": 556,
+        "rating": 3.3,
+        "reviews": 534,
+        "vicinity": "浜松市中央区西伊場町６４−２５",
+        "lat": 34.7008878,
+        "lng": 137.7012345,
+        "place_id": "ChIJrUeUk77eGmAR50eXBl7mw8M"
       }
     ]
   },
@@ -201,7 +133,8 @@
       "google_name": "中華そば おにぎり 番い-tsugai",
       "rating": 4.2,
       "reviews": 936,
-      "address": "日本、〒444-0864 愛知県岡崎市明大寺町川端６"
+      "address": "日本、〒444-0864 愛知県岡崎市明大寺町川端６",
+      "match_distance": 4
     },
     "station": {
       "name": "東岡崎駅",
@@ -269,7 +202,8 @@
       "google_name": "雷杏 名駅店",
       "rating": 4.3,
       "reviews": 1621,
-      "address": "日本、〒453-0015 愛知県名古屋市中村区椿町４−１２"
+      "address": "日本、〒453-0015 愛知県名古屋市中村区椿町４−１２",
+      "match_distance": 4
     },
     "station": {
       "name": "名古屋駅",
@@ -367,7 +301,8 @@
       "google_name": "中華そば 朧月",
       "rating": 4.3,
       "reviews": 1672,
-      "address": "日本、〒460-0021 愛知県名古屋市中区平和１丁目１５−２５ 今井ダイアパレス 1F"
+      "address": "日本、〒460-0021 愛知県名古屋市中区平和１丁目１５−２５ 今井ダイアパレス 1F",
+      "match_distance": 11
     },
     "station": {
       "name": "金山駅",
@@ -377,6 +312,16 @@
       "lng": 136.9012035
     },
     "ramen": [
+      {
+        "name": "一風堂 金山店",
+        "distance": 413,
+        "rating": 3.7,
+        "reviews": 471,
+        "vicinity": "名古屋市中区金山２丁目１６−２２",
+        "lat": 35.14471,
+        "lng": 136.9029492,
+        "place_id": "ChIJ0x2BTa1wA2ARlkELuEk1Pj0"
+      },
       {
         "name": "麺家 喜多楽",
         "distance": 473,
@@ -465,7 +410,8 @@
       "google_name": "肉玉中華そば 轟 名駅店",
       "rating": 4.1,
       "reviews": 879,
-      "address": "日本、〒450-0003 愛知県名古屋市中村区名駅南１丁目１６−１７ 名駅南ビル 1階"
+      "address": "日本、〒450-0003 愛知県名古屋市中村区名駅南１丁目１６−１７ 名駅南ビル 1階",
+      "match_distance": 1
     },
     "station": {
       "name": "近鉄名古屋駅",
@@ -475,16 +421,6 @@
       "lng": 136.8843022
     },
     "ramen": [
-      {
-        "name": "横浜家系ラーメン でら家 名古屋駅前店",
-        "distance": 175,
-        "rating": 3.3,
-        "reviews": 180,
-        "vicinity": "名古屋市中村区名駅４丁目１３−６ トラスト名駅ビル 1F",
-        "lat": 35.16915,
-        "lng": 136.8878007,
-        "place_id": "ChIJt_DkTcl3A2ARawqH0B26Y3c"
-      },
       {
         "name": "麺屋 優光 名古屋店",
         "distance": 321,
@@ -533,7 +469,8 @@
       "google_name": "ダシと麺 くじら 栄本店",
       "rating": 4.2,
       "reviews": 1173,
-      "address": "日本、〒460-0004 愛知県名古屋市中区新栄町３丁目4−１ 第24 プロスパー栄 1F"
+      "address": "日本、〒460-0004 愛知県名古屋市中区新栄町３丁目4−１ 第24 プロスパー栄 1F",
+      "match_distance": 0
     },
     "station": {
       "name": "栄町駅",
@@ -607,11 +544,12 @@
   },
   "8": {
     "self": {
-      "place_id": "ChIJcwlG9yTvAGARstMLHBd0KHc",
-      "google_name": "穂稀（Homare）",
-      "rating": 4.7,
-      "reviews": 28,
-      "address": "日本、〒555-0032 大阪府大阪市西淀川区大和田３丁目２−８"
+      "place_id": "ChIJqY4FAABxA2ARuPc_GtCNY3o",
+      "google_name": "穂稀",
+      "rating": 4.1,
+      "reviews": 400,
+      "address": "日本、〒486-0923 愛知県春日井市下条町１丁目２−２",
+      "match_distance": 1
     },
     "station": {
       "name": "勝川駅",
@@ -639,7 +577,8 @@
       "google_name": "豚ラーメン 一歩前へ",
       "rating": 4,
       "reviews": 261,
-      "address": "日本、〒486-0923 愛知県春日井市下条町１丁目２−２"
+      "address": "日本、〒486-0923 愛知県春日井市下条町１丁目２−２",
+      "match_distance": 1
     },
     "station": {
       "name": "勝川駅",
@@ -651,7 +590,14 @@
     "ramen": []
   },
   "9": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJW-PMmq91A2AR0WvmqltS9r4",
+      "google_name": "中華そば一閃",
+      "rating": 4.2,
+      "reviews": 810,
+      "address": "日本、〒481-0041 愛知県北名古屋市九之坪梅田５３−１",
+      "match_distance": 1
+    },
     "station": {
       "name": "上小田井駅",
       "distance": 1249,
@@ -678,7 +624,8 @@
       "google_name": "中華そば おにぎり 〇△ -まるさんかく-",
       "rating": 4.2,
       "reviews": 685,
-      "address": "日本、〒607-8080 京都府京都市山科区竹鼻竹ノ街道町３５−３２"
+      "address": "日本、〒607-8080 京都府京都市山科区竹鼻竹ノ街道町３５−３２",
+      "match_distance": 28
     },
     "station": {
       "name": "京阪山科駅",
@@ -731,7 +678,14 @@
     ]
   },
   "11": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJB3e_FgB7A2ARYMfC5nOixiI",
+      "google_name": "中華そば レンゲ",
+      "rating": 4.2,
+      "reviews": 868,
+      "address": "日本、〒456-0031 愛知県名古屋市熱田区神宮３丁目７−１ べんてん会館 １Ｆ",
+      "match_distance": 4
+    },
     "station": {
       "name": "神宮前駅",
       "distance": 95,
@@ -763,7 +717,14 @@
     ]
   },
   "12": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJY2cw266OGGARwpOpxrHd51Y",
+      "google_name": "青島食堂 秋葉原店",
+      "rating": 4.3,
+      "reviews": 3893,
+      "address": "日本、〒101-0025 東京都千代田区神田佐久間町３丁目２０−１",
+      "match_distance": 185
+    },
     "station": {
       "name": "秋葉原駅",
       "distance": 269,
@@ -781,26 +742,6 @@
         "lat": 35.6986383,
         "lng": 139.7758435,
         "place_id": "ChIJd9RJhKiOGGAR_UJ21Xk9UVU"
-      },
-      {
-        "name": "ラーメンモンタナ 秋葉原店",
-        "distance": 243,
-        "rating": 3.8,
-        "reviews": 249,
-        "vicinity": "千代田区神田松永町１ 松屋ビル 1F",
-        "lat": 35.6991499,
-        "lng": 139.7751723,
-        "place_id": "ChIJsQIePACPGGARDSSbRn6mwuw"
-      },
-      {
-        "name": "マルショーラーメン",
-        "distance": 258,
-        "rating": 3.4,
-        "reviews": 469,
-        "vicinity": "千代田区神田花岡町１−１ ヨドバシAkiba 8階",
-        "lat": 35.6989712,
-        "lng": 139.774683,
-        "place_id": "ChIJC068J8CPGGARaN1Bql2uJdc"
       },
       {
         "name": "麺処ゆずラボ。秋葉原本店",
@@ -821,16 +762,6 @@
         "lat": 35.7000013,
         "lng": 139.7752681,
         "place_id": "ChIJ9VmEliKPGGARNhdOXFd9LHM"
-      },
-      {
-        "name": "家系らーめん 武将家",
-        "distance": 522,
-        "rating": 3.8,
-        "reviews": 1057,
-        "vicinity": "千代田区外神田４丁目２−７",
-        "lat": 35.7000294,
-        "lng": 139.7719991,
-        "place_id": "ChIJ7eL4PP-NGGARJD6L19G7C7c"
       },
       {
         "name": "麺屋加減",
@@ -863,14 +794,24 @@
         "place_id": "ChIJ0ZJ-DwKMGGARDfmgrVH1HLY"
       },
       {
-        "name": "とんこつラーメン 博多風龍 秋葉原総本店",
-        "distance": 695,
-        "rating": 4.1,
-        "reviews": 1433,
-        "vicinity": "千代田区外神田３丁目１５−６",
-        "lat": 35.70186,
-        "lng": 139.771401,
-        "place_id": "ChIJtacKKQKMGGARLUwG1QZiqao"
+        "name": "炭火焼濃厚中華そば 海富道",
+        "distance": 700,
+        "rating": 4.3,
+        "reviews": 1025,
+        "vicinity": "千代田区神田鍛冶町３丁目３−２",
+        "lat": 35.6933544,
+        "lng": 139.770874,
+        "place_id": "ChIJG7MBLAWNGGARn0fFGWT7afc"
+      },
+      {
+        "name": "味噌ラーメン＆つけ麺 麺処 神田",
+        "distance": 727,
+        "rating": 3.7,
+        "reviews": 203,
+        "vicinity": "千代田区内神田３丁目２０−６",
+        "lat": 35.6929497,
+        "lng": 139.7709075,
+        "place_id": "ChIJ-XZwM3aNGGARs4QVSCPxQqU"
       },
       {
         "name": "麺処かいしん",
@@ -881,6 +822,16 @@
         "lat": 35.6921561,
         "lng": 139.7706463,
         "place_id": "ChIJF7kaRQCNGGARzgpgP5Z-YBM"
+      },
+      {
+        "name": "神田ちえちゃんラーメン",
+        "distance": 868,
+        "rating": 3.8,
+        "reviews": 1602,
+        "vicinity": "千代田区鍛冶町２丁目１３−７",
+        "lat": 35.6915016,
+        "lng": 139.77052,
+        "place_id": "ChIJkx8_gTuNGGARyU8JtqDDIKY"
       },
       {
         "name": "神田ラーメン わいず",
@@ -896,11 +847,12 @@
   },
   "13": {
     "self": {
-      "place_id": "ChIJdXs3ysWTQTURfF-4w1orqSU",
-      "google_name": "白河手打中華そば とら食堂 福岡分店",
-      "rating": 3.9,
-      "reviews": 966,
-      "address": "日本、〒810-0044 福岡県福岡市中央区六本松４丁目９−１０"
+      "place_id": "ChIJK6rNSACRQTURfYf-SGw9OA4",
+      "google_name": "おダシと銀しゃり 中華そば とら松",
+      "rating": 4.1,
+      "reviews": 589,
+      "address": "日本、〒811-1313 福岡県福岡市南区曰佐４丁目３９−３０",
+      "match_distance": 3
     },
     "station": {
       "name": "井尻駅",
@@ -938,7 +890,8 @@
       "google_name": "中華そば 那由多",
       "rating": 4.3,
       "reviews": 816,
-      "address": "日本、〒532-0023 大阪府大阪市淀川区十三東３丁目２８−１４"
+      "address": "日本、〒532-0023 大阪府大阪市淀川区十三東３丁目２８−１４",
+      "match_distance": 1
     },
     "station": {
       "name": "十三駅",
@@ -1036,7 +989,8 @@
       "google_name": "中華そば 麒麟",
       "rating": 4.1,
       "reviews": 890,
-      "address": "日本、〒170-0014 東京都豊島区池袋２丁目４−３ 江戸半第3パレスビル 1階"
+      "address": "日本、〒170-0014 東京都豊島区池袋２丁目４−３ 江戸半第3パレスビル 1階",
+      "match_distance": 0
     },
     "station": {
       "name": "池袋駅",
@@ -1105,11 +1059,28 @@
         "lat": 35.7322243,
         "lng": 139.7137455,
         "place_id": "ChIJKc6lYeeNGGARMkgkz-JW890"
+      },
+      {
+        "name": "昭和らぁ麺 サンシャイン通り店",
+        "distance": 569,
+        "rating": 4.6,
+        "reviews": 188,
+        "vicinity": "豊島区東池袋１丁目３−７",
+        "lat": 35.7305096,
+        "lng": 139.7135649,
+        "place_id": "ChIJsUxSGjmNGGARAq6bSwSnrwE"
       }
     ]
   },
   "16": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJkUK9B2_xAGARvRsAMUryg-Y",
+      "google_name": "中華そば たけ虎",
+      "rating": 4.3,
+      "reviews": 676,
+      "address": "日本、〒664-0851 兵庫県伊丹市中央２丁目１−１ 伊丹中央ビル 1F",
+      "match_distance": 1
+    },
     "station": {
       "name": "伊丹駅（阪急）",
       "distance": 134,
@@ -1127,11 +1098,48 @@
         "lat": 34.7799136,
         "lng": 135.4132429,
         "place_id": "ChIJUV5I-F7xAGAR1ArMfYGRMqY"
+      },
+      {
+        "name": "伊丹で唯一牛タン担々麺のお店 2コ38食堂",
+        "distance": 209,
+        "rating": 4.2,
+        "reviews": 11,
+        "vicinity": "伊丹市中央５丁目１−４",
+        "lat": 34.7795737,
+        "lng": 135.4161753,
+        "place_id": "ChIJ418sjo_xAGARluRAcyC0hwQ"
+      },
+      {
+        "name": "担担麺 貔貅(ヒキュウ)",
+        "distance": 368,
+        "rating": 4.3,
+        "reviews": 127,
+        "vicinity": "伊丹市西台５丁目１−１２",
+        "lat": 34.7789911,
+        "lng": 135.4112045,
+        "place_id": "ChIJJbtdy4bxAGARNl3Zy17DvWw"
+      },
+      {
+        "name": "麺屋巧",
+        "distance": 460,
+        "rating": 3.9,
+        "reviews": 277,
+        "vicinity": "伊丹市行基町３丁目１６−９ 花川ビル",
+        "lat": 34.7786721,
+        "lng": 135.4102643,
+        "place_id": "ChIJSzWv86zxAGARW7YPsyaUbsI"
       }
     ]
   },
   "17": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJMTMZoVrdAGARY4R3Ih3BttY",
+      "google_name": "おダシと銀しゃり 中華そば 三ノル",
+      "rating": 4.4,
+      "reviews": 489,
+      "address": "日本、〒558-0013 大阪府大阪市住吉区我孫子東２丁目９−7 マンション ブルースカイ 1階",
+      "match_distance": 2
+    },
     "station": {
       "name": "我孫子町駅",
       "distance": 599,
@@ -1193,7 +1201,14 @@
     ]
   },
   "18": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJqVBd9Q6DBGARJEs08KY0pVU",
+      "google_name": "らぁ麺 ほたる",
+      "rating": 4.4,
+      "reviews": 1661,
+      "address": "日本、〒470-2101 愛知県知多郡東浦町森岡柳ケ坪４−１",
+      "match_distance": 11
+    },
     "station": {
       "name": "尾張森岡駅",
       "distance": 761,
@@ -1204,7 +1219,14 @@
     "ramen": []
   },
   "19": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJ6d85w-OfBGARVhcuI4rLjZ4",
+      "google_name": "中華そば 桜花",
+      "rating": 4.3,
+      "reviews": 1262,
+      "address": "日本、〒473-0936 愛知県豊田市西岡町保ケ山５６−１",
+      "match_distance": 0
+    },
     "station": {
       "name": "若林駅",
       "distance": 3810,
@@ -1215,7 +1237,14 @@
     "ramen": []
   },
   "20": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJLbo3U8_fGGARTYoc47Glwvs",
+      "google_name": "らぁ麺 ひよこ",
+      "rating": 4,
+      "reviews": 394,
+      "address": "日本、〒359-1106 埼玉県所沢市東狭山ケ丘６丁目８０２−５",
+      "match_distance": 2
+    },
     "station": {
       "name": "狭山ヶ丘駅",
       "distance": 727,
@@ -1265,6 +1294,16 @@
         "place_id": "ChIJEXrAqN_fGGARx3ofJfIs--o"
       },
       {
+        "name": "京都北白川ラーメン魁力屋 所沢小手指店",
+        "distance": 759,
+        "rating": 3.7,
+        "reviews": 228,
+        "vicinity": "所沢市東狭山ケ丘４丁目２６７３−８",
+        "lat": 35.811214,
+        "lng": 139.4294407,
+        "place_id": "ChIJ44dmZgjfGGARHLRwzQtzMu4"
+      },
+      {
         "name": "日高屋 武蔵藤沢グリーンガーデン店",
         "distance": 868,
         "rating": 3.5,
@@ -1282,7 +1321,8 @@
       "google_name": "おダシと銀しゃり 中華そば 虹空 -nico-",
       "rating": 4.6,
       "reviews": 893,
-      "address": "日本、〒572-0837 大阪府寝屋川市早子町２−２０"
+      "address": "日本、〒572-0837 大阪府寝屋川市早子町２−２０",
+      "match_distance": 2
     },
     "station": {
       "name": "寝屋川市駅",
@@ -1380,7 +1420,8 @@
       "google_name": "京都木屋町 中華そば らんたん",
       "rating": 4.8,
       "reviews": 2121,
-      "address": "日本、〒604-8001 京都府京都市中京区上大阪町５２８ 遊里香ビル 1階"
+      "address": "日本、〒604-8001 京都府京都市中京区上大阪町５２８ 遊里香ビル 1階",
+      "match_distance": 6
     },
     "station": {
       "name": "三条駅",
@@ -1488,7 +1529,8 @@
       "google_name": "おダシと銀しゃり 中華そば 無作",
       "rating": 4.1,
       "reviews": 665,
-      "address": "日本、〒272-0023 千葉県市川市南八幡３丁目８−９ SAP本八幡Ⅳ 1F"
+      "address": "日本、〒272-0023 千葉県市川市南八幡３丁目８−９ SAP本八幡Ⅳ 1F",
+      "match_distance": 0
     },
     "station": {
       "name": "本八幡駅",
@@ -1596,7 +1638,8 @@
       "google_name": "おダシと銀しゃり 中華そば 上々",
       "rating": 4.2,
       "reviews": 586,
-      "address": "日本、〒533-0004 大阪府大阪市東淀川区小松１丁目４−２７"
+      "address": "日本、〒533-0004 大阪府大阪市東淀川区小松１丁目４−２７",
+      "match_distance": 1
     },
     "station": {
       "name": "上新庄駅",
@@ -1694,7 +1737,8 @@
       "google_name": "おダシと銀しゃり 中華そば 蒼し",
       "rating": 4.3,
       "reviews": 914,
-      "address": "日本、〒635-0025 奈良県大和高田市神楽２丁目１３−４０ 高田パインヒルズ"
+      "address": "日本、〒635-0025 奈良県大和高田市神楽２丁目１３−４０ 高田パインヒルズ",
+      "match_distance": 3
     },
     "station": {
       "name": "大和高田駅",
@@ -1742,7 +1786,8 @@
       "google_name": "中華そば 樹々 kiki",
       "rating": 4.3,
       "reviews": 308,
-      "address": "日本、〒180-0022 東京都武蔵野市境２丁目３−２０ 1F"
+      "address": "日本、〒180-0022 東京都武蔵野市境２丁目３−２０ 1F",
+      "match_distance": 15
     },
     "station": {
       "name": "武蔵境駅",
@@ -1783,26 +1828,6 @@
         "place_id": "ChIJK8YHvZ7vGGARQ0NTNgWsNB8"
       },
       {
-        "name": "横浜家系ラーメン 武蔵境つばさ家",
-        "distance": 270,
-        "rating": 4.1,
-        "reviews": 487,
-        "vicinity": "武蔵野市境１丁目１２−２ シーザスパレス 1F",
-        "lat": 35.7040882,
-        "lng": 139.5460696,
-        "place_id": "ChIJBWtfH5_vGGARidqDVXmaLUs"
-      },
-      {
-        "name": "油そば 東京油組総本店 武蔵境組",
-        "distance": 315,
-        "rating": 3.9,
-        "reviews": 201,
-        "vicinity": "武蔵野市境２丁目２−２５ すきっぷプラザビル 1階",
-        "lat": 35.7027695,
-        "lng": 139.5441564,
-        "place_id": "ChIJpVBPu2DvGGAR5cpBizuQm18"
-      },
-      {
         "name": "らーめん 武蔵家 武蔵境店",
         "distance": 339,
         "rating": 3.6,
@@ -1820,7 +1845,8 @@
       "google_name": "つけ麺 鶏そば 鯔背ヤ",
       "rating": 4.3,
       "reviews": 846,
-      "address": "日本、〒802-0002 福岡県北九州市小倉北区京町１丁目３−７"
+      "address": "日本、〒802-0002 福岡県北九州市小倉北区京町１丁目３−７",
+      "match_distance": 1
     },
     "station": {
       "name": "小倉駅",
@@ -1908,7 +1934,8 @@
       "google_name": "おダシと銀しゃり 中華そば 新た",
       "rating": 4.2,
       "reviews": 545,
-      "address": "日本、〒254-0043 神奈川県平塚市紅谷町９−１２"
+      "address": "日本、〒254-0043 神奈川県平塚市紅谷町９−１２",
+      "match_distance": 0
     },
     "station": {
       "name": "平塚駅",
@@ -1918,16 +1945,6 @@
       "lng": 139.3504658
     },
     "ramen": [
-      {
-        "name": "地獄の担担麺 天竜本店",
-        "distance": 78,
-        "rating": 4.4,
-        "reviews": 791,
-        "vicinity": "平塚市紅谷町１１−１０",
-        "lat": 35.3293748,
-        "lng": 139.347663,
-        "place_id": "ChIJQXowfyGtGWARexoEO2C6BPo"
-      },
       {
         "name": "横浜家系ラーメン松壱家 平塚店",
         "distance": 93,
@@ -2026,7 +2043,8 @@
       "google_name": "背脂醤油 ラーメン庄兵衛",
       "rating": 4.3,
       "reviews": 280,
-      "address": "日本、〒530-0041 大阪府大阪市北区天神橋２丁目２−８"
+      "address": "日本、〒530-0041 大阪府大阪市北区天神橋２丁目２−８",
+      "match_distance": 0
     },
     "station": {
       "name": "大阪天満宮駅",
@@ -2134,7 +2152,8 @@
       "google_name": "おダシと銀しゃり 中華そば 花道",
       "rating": 4.1,
       "reviews": 282,
-      "address": "日本、〒332-0016 埼玉県川口市幸町２丁目８−２７"
+      "address": "日本、〒332-0016 埼玉県川口市幸町２丁目８−２７",
+      "match_distance": 6
     },
     "station": {
       "name": "川口駅",
@@ -2212,7 +2231,8 @@
       "google_name": "放課後いつもの場所で",
       "rating": 4.2,
       "reviews": 624,
-      "address": "日本、〒453-0015 愛知県名古屋市中村区椿町４−１２"
+      "address": "日本、〒453-0015 愛知県名古屋市中村区椿町４−１２",
+      "match_distance": 5
     },
     "station": {
       "name": "名古屋駅",
@@ -2310,7 +2330,8 @@
       "google_name": "中華そば・つけ麺 日はまた昇る",
       "rating": 4.3,
       "reviews": 493,
-      "address": "日本、〒480-1156 愛知県長久手市五合池１４１３"
+      "address": "日本、〒480-1156 愛知県長久手市五合池１４１３",
+      "match_distance": 1
     },
     "station": {
       "name": "はなみずき通駅",
@@ -2338,7 +2359,8 @@
       "google_name": "ラーメン・つけめん 藤虎",
       "rating": 4,
       "reviews": 387,
-      "address": "日本、〒460-0003 愛知県名古屋市中区錦２丁目１３−２５ 1f"
+      "address": "日本、〒460-0003 愛知県名古屋市中区錦２丁目１３−２５ 1f",
+      "match_distance": 0
     },
     "station": {
       "name": "栄町駅",
@@ -2466,7 +2488,8 @@
       "google_name": "夢にカケハシ 響けハレノヒ",
       "rating": 4.3,
       "reviews": 748,
-      "address": "日本、〒950-0087 新潟県新潟市中央区東大通１丁目７−７ IMAⅢビル 地下B号室"
+      "address": "日本、〒950-0087 新潟県新潟市中央区東大通１丁目７−７ IMAⅢビル 地下B号室",
+      "match_distance": 24
     },
     "station": {
       "name": "新潟駅",
@@ -2554,7 +2577,8 @@
       "google_name": "豚ラーメン おはよう世界",
       "rating": 4.1,
       "reviews": 299,
-      "address": "日本、〒460-0012 愛知県名古屋市中区千代田５丁目１５−１２"
+      "address": "日本、〒460-0012 愛知県名古屋市中区千代田５丁目１５−１２",
+      "match_distance": 1
     },
     "station": {
       "name": "鶴舞駅",
@@ -2564,16 +2588,6 @@
       "lng": 136.9176762
     },
     "ramen": [
-      {
-        "name": "麺家 幸先坂",
-        "distance": 203,
-        "rating": 4.1,
-        "reviews": 1012,
-        "vicinity": "名古屋市中区千代田５丁目２２−１８ グランドメゾン鶴舞公園 １０１",
-        "lat": 35.1567745,
-        "lng": 136.9175816,
-        "place_id": "ChIJKfjg2PlxA2ARfj4h-DxnY1U"
-      },
       {
         "name": "ベトコンラーメン新京 鶴舞店",
         "distance": 334,
@@ -2602,7 +2616,8 @@
       "google_name": "濃厚豚骨ラーメン 豚と小麦",
       "rating": 4.2,
       "reviews": 288,
-      "address": "日本、〒101-0044 東京都千代田区鍛冶町１丁目５−１ 中沢ビル 1階"
+      "address": "日本、〒101-0044 東京都千代田区鍛冶町１丁目５−１ 中沢ビル 1階",
+      "match_distance": 10
     },
     "station": {
       "name": "神田駅",
@@ -2750,7 +2765,8 @@
       "google_name": "豚ラーメン サブロー（無料駐車場9台)",
       "rating": 4,
       "reviews": 335,
-      "address": "日本、〒497-0058 愛知県海部郡蟹江町富吉４丁目１２６ キトーハイツ 1F"
+      "address": "日本、〒497-0058 愛知県海部郡蟹江町富吉４丁目１２６ キトーハイツ 1F",
+      "match_distance": 0
     },
     "station": {
       "name": "富吉駅",
@@ -2767,7 +2783,8 @@
       "google_name": "ラーメン・つけめん 刻々",
       "rating": 4.3,
       "reviews": 343,
-      "address": "日本、〒662-0911 兵庫県西宮市池田町７−７"
+      "address": "日本、〒662-0911 兵庫県西宮市池田町７−７",
+      "match_distance": 2
     },
     "station": {
       "name": "西宮駅",
@@ -2806,16 +2823,6 @@
         "lat": 34.740717,
         "lng": 135.342788,
         "place_id": "ChIJTyYjk1vyAGAR8dbO-jx3UwI"
-      },
-      {
-        "name": "京都北白川ラーメン魁力屋 西宮店",
-        "distance": 481,
-        "rating": 3.8,
-        "reviews": 1025,
-        "vicinity": "西宮市中前田町７",
-        "lat": 34.7417594,
-        "lng": 135.3441595,
-        "place_id": "ChIJqeO_r1vyAGARtAlWmvvVVEA"
       },
       {
         "name": "ラーメン荘 これが好きだから",
@@ -2895,7 +2902,8 @@
       "google_name": "京都二条 麺屋 啜る",
       "rating": 4.7,
       "reviews": 618,
-      "address": "日本、〒604-8411 京都府京都市中京区聚楽廻南町１−９ ルミエール二条 105"
+      "address": "日本、〒604-8411 京都府京都市中京区聚楽廻南町１−９ ルミエール二条 105",
+      "match_distance": 0
     },
     "station": {
       "name": "二条（地下鉄）",
@@ -2973,7 +2981,8 @@
       "google_name": "麺屋 華山",
       "rating": 4.6,
       "reviews": 736,
-      "address": "日本、〒460-0008 愛知県名古屋市中区栄３丁目１２−１４ プリンセス遠山ビル 1F"
+      "address": "日本、〒460-0008 愛知県名古屋市中区栄３丁目１２−１４ プリンセス遠山ビル 1F",
+      "match_distance": 2
     },
     "station": {
       "name": "栄町駅",
@@ -3101,7 +3110,8 @@
       "google_name": "熊猫商店",
       "rating": 4.4,
       "reviews": 539,
-      "address": "日本、〒460-0022 愛知県名古屋市中区金山１丁目１８−８"
+      "address": "日本、〒460-0022 愛知県名古屋市中区金山１丁目１８−８",
+      "match_distance": 0
     },
     "station": {
       "name": "金山駅",
@@ -3120,6 +3130,16 @@
         "lat": 35.1436453,
         "lng": 136.9022691,
         "place_id": "ChIJs_gPZYh3A2ARe_ZKNP4PjHQ"
+      },
+      {
+        "name": "とんこつラーメン ラの壱 金山駅店",
+        "distance": 76,
+        "rating": 3.6,
+        "reviews": 795,
+        "vicinity": "名古屋市熱田区金山町１丁目１−１８ ２F 金山総合駅 μPLAT金山",
+        "lat": 35.1424373,
+        "lng": 136.9020389,
+        "place_id": "ChIJtWao81J3A2ARxpoSMHMlgyw"
       },
       {
         "name": "横浜家系ラーメン 金山家 本店",
@@ -3162,6 +3182,16 @@
         "place_id": "ChIJC-ripOp7A2ARTsqkraCT9ZU"
       },
       {
+        "name": "麺屋原宿 金山店",
+        "distance": 227,
+        "rating": 3.5,
+        "reviews": 530,
+        "vicinity": "名古屋市中区金山１丁目１５−１４ トーカンマンション金山 1F",
+        "lat": 35.144236,
+        "lng": 136.900226,
+        "place_id": "ChIJNeGrhk13A2AR5NKqexnE5gI"
+      },
+      {
         "name": "らーめんニュー直方",
         "distance": 384,
         "rating": 4.2,
@@ -3170,16 +3200,6 @@
         "lat": 35.144182,
         "lng": 136.9062996,
         "place_id": "ChIJ8-lRkBt3A2ARtWHDwcr-EOI"
-      },
-      {
-        "name": "中華そば 朧月",
-        "distance": 592,
-        "rating": 4.3,
-        "reviews": 1672,
-        "vicinity": "名古屋市中区平和１丁目１５−２５ 今井ダイアパレス 1F",
-        "lat": 35.1482796,
-        "lng": 136.9037092,
-        "place_id": "ChIJ0WzQtjtxA2ARqlMxGz6u3t0"
       }
     ]
   },
@@ -3189,7 +3209,8 @@
       "google_name": "豚大学 ラーメン学部",
       "rating": 4.3,
       "reviews": 114,
-      "address": "日本、〒101-0051 東京都千代田区神田神保町１丁目８ Fuji ビル 1F"
+      "address": "日本、〒101-0051 東京都千代田区神田神保町１丁目８ Fuji ビル 1F",
+      "match_distance": 4
     },
     "station": {
       "name": "新御茶ノ水駅",
@@ -3240,16 +3261,6 @@
         "place_id": "ChIJw9LwawCNGGARm692_20C7mw"
       },
       {
-        "name": "成都正宗担々麺 つじ田 小川町店",
-        "distance": 397,
-        "rating": 4.2,
-        "reviews": 1343,
-        "vicinity": "千代田区神田小川町３丁目２ サニービル 1階",
-        "lat": 35.694685,
-        "lng": 139.7628719,
-        "place_id": "ChIJNRfophqMGGARU_M1YQ8LZPo"
-      },
-      {
         "name": "博多ラーメン 福や 水道橋店",
         "distance": 446,
         "rating": 4.2,
@@ -3287,7 +3298,8 @@
       "google_name": "中華そば・つけ麺 ひばり食堂",
       "rating": null,
       "reviews": null,
-      "address": "日本、〒434-0041 静岡県浜松市浜名区平口２８６１ サンストリート浜北 内 1F フードコート"
+      "address": "日本、〒434-0041 静岡県浜松市浜名区平口２８６１ サンストリート浜北 内 1F フードコート",
+      "match_distance": 84
     },
     "station": {
       "name": "遠州小松駅",
@@ -3299,7 +3311,14 @@
     "ramen": []
   },
   "46": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJ5yfWl0dxA2ARBlYhh5YX0rs",
+      "google_name": "別品 鶏麺",
+      "rating": 4,
+      "reviews": 85,
+      "address": "日本、〒460-0003 愛知県名古屋市中区錦３丁目１２−２５",
+      "match_distance": 167
+    },
     "station": {
       "name": "栄町駅",
       "distance": 664,
@@ -3430,5 +3449,5 @@
       }
     ]
   },
-  "_updated": "2026-04-16 14:36:39"
+  "_updated": "2026-04-16 15:00:31"
 }

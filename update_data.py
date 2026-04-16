@@ -12,7 +12,7 @@ API_KEY = "AIzaSyCnK1j8iAoBggsdjUkXRzLrR6ok32bNA9w"
 # 店舗リスト (num, name, lat, lng) - geocode済み
 STORES = [
     (1, "二兎", 35.1744006, 136.8842928),
-    (2, "おダシと銀しゃり中華そば 雲雀", 35.1060517, 138.8985897),
+    (2, "おダシと銀しゃり中華そば 雲雀", 34.6993932, 137.6954296),
     (3, "中華そばおにぎり 番い", 34.9526478, 137.1672608),
     (4, "中華そば 雷杏", 35.1699539, 136.878134),
     (5, "中華そば 朧月", 35.148377, 136.903674),
@@ -78,25 +78,53 @@ def fetch(url):
         return json.loads(r.read())
 
 
-def get_self(name, lat, lng):
-    """店舗自身のGoogle Places情報を取得 (★, レビュー数)"""
-    # Find Place From Text で place_id 検索
-    query = f"{name} {lat},{lng}"
+def _try_place_search(query, lat, lng, max_dist=300):
+    """指定座標からmax_dist m以内の検索結果を返す"""
+    # findplacefromtext
     url = (f"https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
            f"?input={query}&inputtype=textquery"
-           f"&fields=place_id,name,rating,user_ratings_total,formatted_address"
-           f"&locationbias=point:{lat},{lng}"
+           f"&fields=place_id,name,rating,user_ratings_total,formatted_address,geometry"
+           f"&locationbias=circle:{max_dist}@{lat},{lng}"
            f"&language=ja&key={API_KEY}")
     d = fetch(url)
     if d.get('status') == 'OK' and d.get('candidates'):
         c = d['candidates'][0]
-        return {
-            'place_id': c.get('place_id', ''),
-            'google_name': c.get('name', ''),
-            'rating': c.get('rating'),
-            'reviews': c.get('user_ratings_total'),
-            'address': c.get('formatted_address', '')
-        }
+        loc = c.get('geometry', {}).get('location', {})
+        if loc:
+            dist = haversine(lat, lng, loc['lat'], loc['lng'])
+            if dist <= max_dist:
+                return c, dist
+    # Text Search
+    url2 = (f"https://maps.googleapis.com/maps/api/place/textsearch/json"
+            f"?query={query}&location={lat},{lng}&radius={max_dist}"
+            f"&language=ja&key={API_KEY}")
+    d2 = fetch(url2)
+    if d2.get('status') == 'OK' and d2.get('results'):
+        for c in d2['results']:
+            loc = c.get('geometry', {}).get('location', {})
+            if loc:
+                dist = haversine(lat, lng, loc['lat'], loc['lng'])
+                if dist <= max_dist:
+                    return c, dist
+    return None, None
+
+
+def get_self(name, lat, lng):
+    """店舗自身のGoogle Places情報を取得 (★, レビュー数)
+    座標から200m以内にマッチしたもののみ採用。
+    失敗したら "ラーメン {name}" で再検索。
+    """
+    for query in [name, f"ラーメン {name}", f"{name} ラーメン"]:
+        c, dist = _try_place_search(query, lat, lng, max_dist=200)
+        if c:
+            return {
+                'place_id': c.get('place_id', ''),
+                'google_name': c.get('name', ''),
+                'rating': c.get('rating'),
+                'reviews': c.get('user_ratings_total'),
+                'address': c.get('formatted_address', ''),
+                'match_distance': dist
+            }
     return None
 
 
