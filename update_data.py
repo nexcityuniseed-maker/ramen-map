@@ -146,8 +146,25 @@ def _try_place_search(query, orig_name, lat, lng, max_dist=300):
 def get_self(name, lat, lng):
     """店舗自身のGoogle Places情報を取得 (★, レビュー数)
     座標から200m以内 かつ 名前類似性のあるもののみ採用。
+    短い店名の場合、Googleでの正式名称に prefix がついている場合があるので複数パターンで検索。
     """
-    for query in [name, f"ラーメン {name}", f"{name} ラーメン"]:
+    queries = [
+        name,
+        f"ラーメン {name}",
+        f"{name} ラーメン",
+        f"中華そば {name}",
+        f"{name} 中華そば",
+        f"肉玉中華そば {name}",
+        f"麺屋 {name}",
+        f"{name} 麺屋",
+        f"つけ麺 {name}",
+        f"{name} つけ麺",
+    ]
+    seen_queries = set()
+    for query in queries:
+        if query in seen_queries:
+            continue
+        seen_queries.add(query)
         c, dist = _try_place_search(query, name, lat, lng, max_dist=200)
         if c:
             return {
