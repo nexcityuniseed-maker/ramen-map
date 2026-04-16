@@ -414,45 +414,6 @@
   },
   "8": {
     "self": {
-      "place_id": "ChIJqY4FAABxA2ARuPc_GtCNY3o",
-      "google_name": "穂稀",
-      "rating": 4.1,
-      "reviews": 400,
-      "address": "日本、〒486-0923 愛知県春日井市下条町１丁目２−２",
-      "match_distance": 1
-    },
-    "station": {
-      "name": "勝川駅",
-      "distance": 1078,
-      "walkMin": 14,
-      "lat": 35.2304228,
-      "lng": 136.9569692
-    },
-    "ramen": [
-      {
-        "name": "豚ラーメン 一歩前へ",
-        "distance": 1,
-        "rating": 4,
-        "reviews": 261,
-        "vicinity": "春日井市下条町１丁目２−２",
-        "lat": 35.2300478,
-        "lng": 136.9688112,
-        "place_id": "ChIJKbBSDwBxA2ARfnve1EbQbE8"
-      },
-      {
-        "name": "らぅめん考房ありがた屋",
-        "distance": 405,
-        "rating": 3.7,
-        "reviews": 513,
-        "vicinity": "春日井市小野町４丁目１２３",
-        "lat": 35.2293072,
-        "lng": 136.9644548,
-        "place_id": "ChIJXyQOvPNxA2AR55fEcY4P_RQ"
-      }
-    ]
-  },
-  "8b": {
-    "self": {
       "place_id": "ChIJKbBSDwBxA2ARfnve1EbQbE8",
       "google_name": "豚ラーメン 一歩前へ",
       "rating": 4,
