@@ -9,6 +9,13 @@ import urllib.request, urllib.parse, json, math, time, re
 
 API_KEY = "AIzaSyCnK1j8iAoBggsdjUkXRzLrR6ok32bNA9w"
 
+# 店舗名オーバーライド（Googleでの正式名称で検索したい場合のみ指定）
+# Excelの店名とGoogleの正式名称が違うケースで使用
+NAME_OVERRIDES = {
+    "10": "中華そば おにぎり 〇△",   # Excel: "◯△" (U+25EF) / Google: "〇△" (U+3007)
+    "12": "肉玉中華そば 連獅子",       # Excel: "連獅子" / Google: "肉玉中華そば 連獅子"
+}
+
 # 店舗リスト (num, name, lat, lng) - geocode済み
 STORES = [
     (1, "二兎", 35.1744006, 136.8842928),
@@ -143,12 +150,15 @@ def _try_place_search(query, orig_name, lat, lng, max_dist=300):
     return None, None
 
 
-def get_self(name, lat, lng):
+def get_self(name, lat, lng, override=None):
     """店舗自身のGoogle Places情報を取得 (★, レビュー数)
     座標から200m以内 かつ 名前類似性のあるもののみ採用。
-    短い店名の場合、Googleでの正式名称に prefix がついている場合があるので複数パターンで検索。
+    override: NAME_OVERRIDES での正式名称（指定されれば最優先で検索）
     """
-    queries = [
+    queries = []
+    if override:
+        queries.append(override)
+    queries.extend([
         name,
         f"ラーメン {name}",
         f"{name} ラーメン",
@@ -159,13 +169,15 @@ def get_self(name, lat, lng):
         f"{name} 麺屋",
         f"つけ麺 {name}",
         f"{name} つけ麺",
-    ]
+    ])
+    # overrideを使う場合は類似性チェックにも使う
+    similarity_source = override if override else name
     seen_queries = set()
     for query in queries:
         if query in seen_queries:
             continue
         seen_queries.add(query)
-        c, dist = _try_place_search(query, name, lat, lng, max_dist=200)
+        c, dist = _try_place_search(query, similarity_source, lat, lng, max_dist=200)
         if c:
             return {
                 'place_id': c.get('place_id', ''),
@@ -276,7 +288,8 @@ def main():
         key = str(num)
         print(f"[{i}/{total}] No.{num} {name}...")
         try:
-            self_info = get_self(name, lat, lng)
+            override = NAME_OVERRIDES.get(key)
+            self_info = get_self(name, lat, lng, override=override)
             time.sleep(0.2)
             station = get_station(lat, lng)
             time.sleep(0.2)

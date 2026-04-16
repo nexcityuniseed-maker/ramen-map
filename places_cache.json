@@ -25,16 +25,6 @@
         "lat": 35.1721376,
         "lng": 136.8849523,
         "place_id": "ChIJ6__rQN12A2ARuuPnuP6czl8"
-      },
-      {
-        "name": "ごきげんラーメン",
-        "distance": 478,
-        "rating": 4.3,
-        "reviews": 265,
-        "vicinity": "名古屋市中村区名駅３丁目１−６",
-        "lat": 35.1741006,
-        "lng": 136.8895342,
-        "place_id": "ChIJv1kCQNt2A2ARpF0lu3vu48w"
       }
     ]
   },
@@ -381,6 +371,16 @@
         "place_id": "ChIJRcXnXgBxA2ARCXO1v-9pdfw"
       },
       {
+        "name": "らー麺や",
+        "distance": 243,
+        "rating": 3.4,
+        "reviews": 455,
+        "vicinity": "名古屋市中区栄４丁目８−１ GAZA栄ビル １階",
+        "lat": 35.1674267,
+        "lng": 136.9128203,
+        "place_id": "ChIJgQh7VMVwA2ARjKjW91Ly9b4"
+      },
+      {
         "name": "マルチューラーメン",
         "distance": 365,
         "rating": 3.3,
@@ -499,7 +499,14 @@
     "ramen": []
   },
   "10": {
-    "self": null,
+    "self": {
+      "place_id": "ChIJ03ye8EQPAWARhE8GivmZt-4",
+      "google_name": "中華そば おにぎり 〇△ -まるさんかく-",
+      "rating": 4.2,
+      "reviews": 685,
+      "address": "日本、〒607-8080 京都府京都市山科区竹鼻竹ノ街道町３５−３２",
+      "match_distance": 28
+    },
     "station": {
       "name": "京阪山科駅",
       "distance": 162,
@@ -517,6 +524,16 @@
         "lat": 34.9903025,
         "lng": 135.8164688,
         "place_id": "ChIJ03ye8EQPAWARhE8GivmZt-4"
+      },
+      {
+        "name": "担担麺 胡（えびす）山科本店",
+        "distance": 89,
+        "rating": 4.1,
+        "reviews": 721,
+        "vicinity": "京都市山科区竹鼻竹ノ街道町７４",
+        "lat": 34.9899028,
+        "lng": 135.8158375,
+        "place_id": "ChIJxV1tB70OAWAR89zDpe1edoU"
       },
       {
         "name": "麺家 山科",
@@ -607,16 +624,6 @@
         "place_id": "ChIJ9x4tgOOPGGAR4trltYQO7lc"
       },
       {
-        "name": "家系ラーメン 武将家 外伝",
-        "distance": 317,
-        "rating": 3.7,
-        "reviews": 883,
-        "vicinity": "千代田区神田松永町１６",
-        "lat": 35.6999751,
-        "lng": 139.7752708,
-        "place_id": "ChIJURC4iJGPGGAR8N4e4Yf9VQs"
-      },
-      {
         "name": "中華そば 糸",
         "distance": 320,
         "rating": 3.9,
@@ -654,6 +661,16 @@
         "lat": 33.5377911,
         "lng": 130.434672,
         "place_id": "ChIJ0UCBvcuRQTURJm2LeCotzV8"
+      },
+      {
+        "name": "べーやんラーメン",
+        "distance": 434,
+        "rating": 3.8,
+        "reviews": 17,
+        "vicinity": "福岡市南区曰佐２丁目２７−２７ 松尾ビル",
+        "lat": 33.5391511,
+        "lng": 130.43906,
+        "place_id": "ChIJH72bd9uQQTURJ7ETmRh7psI"
       },
       {
         "name": "ラーメン製作所 FUKUMEN",
@@ -1273,6 +1290,16 @@
         "lat": 35.0058983,
         "lng": 135.7693702,
         "place_id": "ChIJO2IPIuIJAWARYVdiHo57rsg"
+      },
+      {
+        "name": "BASSANOVAバサノバラーメン京都",
+        "distance": 486,
+        "rating": 4.8,
+        "reviews": 614,
+        "vicinity": "京都市中京区式部町２５９ 舟木ビル 1F",
+        "lat": 35.006608,
+        "lng": 135.7668141,
+        "place_id": "ChIJuSn62dAJAWARoo46fwXIkts"
       }
     ]
   },
@@ -1471,16 +1498,6 @@
         "lat": 34.7485061,
         "lng": 135.5384464,
         "place_id": "ChIJ0ZthOUjjAGARSXIzWkvEMag"
-      },
-      {
-        "name": "元祖石焼チゲ 旨辛ラーメン専門店 JanJan 上新庄店",
-        "distance": 447,
-        "rating": 4.4,
-        "reviews": 37,
-        "vicinity": "大阪市東淀川区豊新５丁目１７−２５",
-        "lat": 34.7464805,
-        "lng": 135.5347436,
-        "place_id": "ChIJB4RgOQDjAGARLd63urz2g84"
       }
     ]
   },
@@ -1569,16 +1586,6 @@
         "lat": 35.7031814,
         "lng": 139.5441377,
         "place_id": "ChIJK8YHvZ7vGGARQ0NTNgWsNB8"
-      },
-      {
-        "name": "横浜家系ラーメン 武蔵境つばさ家",
-        "distance": 270,
-        "rating": 4.1,
-        "reviews": 487,
-        "vicinity": "武蔵野市境１丁目１２−２ シーザスパレス 1F",
-        "lat": 35.7040882,
-        "lng": 139.5460696,
-        "place_id": "ChIJBWtfH5_vGGARidqDVXmaLUs"
       },
       {
         "name": "油そば 東京油組総本店 武蔵境組",
@@ -1858,16 +1865,6 @@
         "place_id": "ChIJFc6rk9zmAGARJSvaGZmc0QE"
       },
       {
-        "name": "麺乃庄 つるまる饂飩 南森町店",
-        "distance": 166,
-        "rating": 3.7,
-        "reviews": 637,
-        "vicinity": "大阪市北区天神橋２丁目３−１６ Axis南森町IIビル",
-        "lat": 34.6972721,
-        "lng": 135.5115135,
-        "place_id": "ChIJxTF8UNvmAGAR29vNESCffk4"
-      },
-      {
         "name": "大龍ラーメン",
         "distance": 182,
         "rating": 3.3,
@@ -1965,16 +1962,6 @@
         "lat": 35.803679,
         "lng": 139.7202208,
         "place_id": "ChIJ_e0fTQCTGGARoFYJ0qnUYDw"
-      },
-      {
-        "name": "つけめん102 川口店",
-        "distance": 439,
-        "rating": 3.7,
-        "reviews": 571,
-        "vicinity": "川口市栄町３丁目２−２６",
-        "lat": 35.8037421,
-        "lng": 139.7174464,
-        "place_id": "ChIJix8pWm-TGGAREf4-WipriM4"
       },
       {
         "name": "一風堂 樹モールプラザ川口店",
@@ -2141,16 +2128,6 @@
         "lat": 35.170454,
         "lng": 136.9006451,
         "place_id": "ChIJ42gLKoZ3A2ARUEM_NziQZO8"
-      },
-      {
-        "name": "中華そば 一徹者",
-        "distance": 168,
-        "rating": 3.4,
-        "reviews": 267,
-        "vicinity": "名古屋市中区錦２丁目１１−１０",
-        "lat": 35.1711738,
-        "lng": 136.9006471,
-        "place_id": "ChIJX_AGgRl3A2ARWNvehR6bD2k"
       },
       {
         "name": "別品 鶏麺",
@@ -2560,16 +2537,6 @@
         "place_id": "ChIJ1dcd0ZWPGGAR-GZkOM97IGU"
       },
       {
-        "name": "炭火焼濃厚中華そば 海富道",
-        "distance": 400,
-        "rating": 4.3,
-        "reviews": 1025,
-        "vicinity": "千代田区神田鍛冶町３丁目３−２",
-        "lat": 35.6933544,
-        "lng": 139.770874,
-        "place_id": "ChIJG7MBLAWNGGARn0fFGWT7afc"
-      },
-      {
         "name": "カラシビ味噌らー麺 鬼金棒 神田本店",
         "distance": 451,
         "rating": 4.4,
@@ -2905,16 +2872,6 @@
         "place_id": "ChIJ92h14yJ3A2ARRbZAntW8IVA"
       },
       {
-        "name": "藤一番 金山店",
-        "distance": 181,
-        "rating": 3.4,
-        "reviews": 595,
-        "vicinity": "名古屋市中区金山２丁目１６−１７",
-        "lat": 35.144526,
-        "lng": 136.903233,
-        "place_id": "ChIJ9XqfTq1wA2ARqTClUTVkA7s"
-      },
-      {
         "name": "桐麺 金山店",
         "distance": 203,
         "rating": 4.1,
@@ -3095,16 +3052,6 @@
         "place_id": "ChIJ42gLKoZ3A2ARUEM_NziQZO8"
       },
       {
-        "name": "別品 鶏麺",
-        "distance": 167,
-        "rating": 4,
-        "reviews": 85,
-        "vicinity": "名古屋市中区錦３丁目１２−２５",
-        "lat": 35.170649,
-        "lng": 136.9034543,
-        "place_id": "ChIJ5yfWl0dxA2ARBlYhh5YX0rs"
-      },
-      {
         "name": "中華そば上田製麺店",
         "distance": 286,
         "rating": 4.2,
@@ -3206,5 +3153,5 @@
       }
     ]
   },
-  "_updated": "2026-04-16 15:59:36"
+  "_updated": "2026-04-16 16:09:04"
 }
