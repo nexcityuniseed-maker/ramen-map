@@ -145,12 +145,16 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
     並び順:
     <select id="sortSelect">
       <option value="num">店舗番号順</option>
-      <option value="mesh_desc">500mメッシュ人口(多い順)</option>
-      <option value="mesh_asc">500mメッシュ人口(少ない順)</option>
+      <option value="dayEst_desc">500m昼間人口(概算)多い順</option>
+      <option value="dayEst_asc">500m昼間人口(概算)少ない順</option>
+      <option value="emp_desc">500m従業者数(多い順)</option>
+      <option value="emp_asc">500m従業者数(少ない順)</option>
+      <option value="pop_desc">500m居住人口(多い順)</option>
+      <option value="pop_asc">500m居住人口(少ない順)</option>
+      <option value="estF_desc">500m飲食店数(多い順)</option>
+      <option value="estF_asc">500m飲食店数(少ない順)</option>
       <option value="day_desc">市区町村昼間人口(多い順)</option>
       <option value="day_asc">市区町村昼間人口(少ない順)</option>
-      <option value="ratio_desc">昼夜間比率(高い順)</option>
-      <option value="ratio_asc">昼夜間比率(低い順)</option>
     </select>
   </div>
   <div class="stats" id="stats"></div>
@@ -160,11 +164,13 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
 <button class="toggle-list" id="toggleList" onclick="togglePanel()">店舗一覧</button>
 
 <div class="legend">
-  <h5>マーカー凡例 (昼間人口)</h5>
-  <div class="legend-item"><span class="legend-circle" style="background:#b71c1c"></span>50万人以上</div>
-  <div class="legend-item"><span class="legend-circle" style="background:#d32f2f"></span>20万〜50万人</div>
-  <div class="legend-item"><span class="legend-circle" style="background:#f57c00"></span>10万〜20万人</div>
-  <div class="legend-item"><span class="legend-circle" style="background:#fbc02d"></span>10万人未満</div>
+  <h5>マーカー色: 500m昼間人口(概算)</h5>
+  <div style="font-size:10px;color:#888;margin-bottom:4px;">居住人口 + 事業所従業者数</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#b71c1c"></span>30,000人以上</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#d32f2f"></span>10,000〜30,000人</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#f57c00"></span>5,000〜10,000人</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#fbc02d"></span>2,000〜5,000人</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#9e9d24"></span>2,000人未満</div>
   <div class="legend-item"><span class="legend-circle" style="background:#999"></span>閉店</div>
 </div>
 
@@ -214,53 +220,55 @@ const POPULATION = {
   "新潟市中央区":{night:180345,day:232902,ratio:129.1}
 };
 
-// 令和2年国勢調査 500mメッシュ 居住人口 (e-Stat CSV取得、メッシュコードは4次地域メッシュ)
+// 500mメッシュ統合データ (e-Stat)
+// pop = 居住人口(令和2年国勢調査) / emp = 事業所従業者数(R3経済センサス 昼間働く人)
+// est = 事業所総数 / empF = 飲食業従業者 / estF = 飲食業事業所数
 const MESH_POP = {
-  "1":{mesh:"523667004",pop:386},
-  "2":{mesh:"523857214",pop:947},
-  "3":{mesh:"523731431",pop:1253},
-  "4":{mesh:"523667001",pop:1880},
-  "5":{mesh:"523657723",pop:3633},
-  "6":{mesh:"523667011",pop:2036},
-  "7":{mesh:"523667031",pop:2230},
-  "8":{mesh:"523667774",pop:601},
-  "9":{mesh:"523666793",pop:2037},
-  "10":{mesh:"523536853",pop:4284},
-  "11":{mesh:"523657522",pop:440},
-  "12":{mesh:"533946323",pop:3904},
-  "13":{mesh:"503023444",pop:2519},
-  "14":{mesh:"523503684",pop:5056},
-  "15":{mesh:"533945764",pop:1342},
-  "16":{mesh:"523513333",pop:4119},
-  "17":{mesh:"513574104",pop:5212},
-  "18":{mesh:"523637973",pop:931},
-  "19":{mesh:"523740542",pop:1659},
-  "20":{mesh:"533953734",pop:2262},
-  "21":{mesh:"523514194",pop:2546},
-  "22":{mesh:"523546112",pop:1738},
-  "23":{mesh:"533947641",pop:7263},
-  "24":{mesh:"523514022",pop:5776},
-  "25":{mesh:"513565293",pop:1534},
-  "26":{mesh:"533944433",pop:3163},
-  "27":{mesh:"503067601",pop:839},
-  "28":{mesh:"523972972",pop:2511},
-  "29":{mesh:"523504302",pop:4996},
-  "30":{mesh:"533955674",pop:7661},
-  "31":{mesh:"523667001",pop:1880},
-  "32":{mesh:"523760123",pop:2682},
-  "33":{mesh:"523667021",pop:405},
-  "34":{mesh:"563960944",pop:1517},
-  "35":{mesh:"523657931",pop:3179},
-  "36":{mesh:"533946214",pop:1004},
-  "37":{mesh:"523656414",pop:1410},
-  "38":{mesh:"523502874",pop:3094},
-  "40":{mesh:"523545193",pop:4479},
-  "41":{mesh:"523657923",pop:1800},
-  "42":{mesh:"523657721",pop:2279},
-  "43":{mesh:"533946304",pop:2133},
-  "44":{mesh:"523716502",pop:64},
-  "45":{mesh:"523657973",pop:3352},
-  "46":{mesh:"523667021",pop:405}
+  "1":{mesh:"523667004",pop:386,est:1789,emp:57026,estF:271,empF:4690},
+  "2":{mesh:"523857214",pop:947,est:56,emp:519,estF:7,empF:64},
+  "3":{mesh:"523731431",pop:1253,est:261,emp:2284,estF:83,empF:740},
+  "4":{mesh:"523667001",pop:1880,est:686,emp:9122,estF:147,empF:1718},
+  "5":{mesh:"523657723",pop:3633,est:378,emp:4852,estF:48,empF:286},
+  "6":{mesh:"523667011",pop:2036,est:1122,emp:20650,estF:145,empF:1447},
+  "7":{mesh:"523667031",pop:2230,est:614,emp:10430,estF:262,empF:1725},
+  "8":{mesh:"523667774",pop:601,est:30,emp:642,estF:4,empF:32},
+  "9":{mesh:"523666793",pop:2037,est:73,emp:429,estF:7,empF:27},
+  "10":{mesh:"523536853",pop:4284,est:357,emp:3455,estF:67,empF:755},
+  "11":{mesh:"523657522",pop:440,est:124,emp:1500,estF:32,empF:118},
+  "12":{mesh:"533946323",pop:3904,est:1670,emp:28401,estF:113,empF:1048},
+  "13":{mesh:"503023444",pop:2519,est:88,emp:766,estF:5,empF:25},
+  "14":{mesh:"523503684",pop:5056,est:253,emp:4368,estF:47,empF:241},
+  "15":{mesh:"533945764",pop:1342,est:1716,emp:24072,estF:450,empF:6618},
+  "16":{mesh:"523513333",pop:4119,est:438,emp:4153,estF:105,empF:916},
+  "17":{mesh:"513574104",pop:5212,est:186,emp:1473,estF:12,empF:52},
+  "18":{mesh:"523637973",pop:931,est:22,emp:170,estF:5,empF:31},
+  "19":{mesh:"523740542",pop:1659,est:22,emp:163,estF:12,empF:79},
+  "20":{mesh:"533953734",pop:2262,est:71,emp:637,estF:7,empF:37},
+  "21":{mesh:"523514194",pop:2546,est:463,emp:4324,estF:115,empF:1252},
+  "22":{mesh:"523546112",pop:1738,est:402,emp:4649,estF:128,empF:2079},
+  "23":{mesh:"533947641",pop:7263,est:450,emp:4027,estF:86,empF:656},
+  "24":{mesh:"523514022",pop:5776,est:242,emp:2040,estF:44,empF:284},
+  "25":{mesh:"513565293",pop:1534,est:68,emp:960,estF:6,empF:106},
+  "26":{mesh:"533944433",pop:3163,est:88,emp:767,estF:7,empF:24},
+  "27":{mesh:"503067601",pop:839,est:834,emp:8023,estF:206,empF:2232},
+  "28":{mesh:"523972972",pop:2511,est:461,emp:4940,estF:130,empF:1080},
+  "29":{mesh:"523504302",pop:4996,est:1009,emp:6716,estF:81,empF:527},
+  "30":{mesh:"533955674",pop:7661,est:343,emp:3823,estF:41,empF:1076},
+  "31":{mesh:"523667001",pop:1880,est:686,emp:9122,estF:147,empF:1718},
+  "32":{mesh:"523760123",pop:2682,est:64,emp:535,estF:6,empF:28},
+  "33":{mesh:"523667021",pop:405,est:1590,emp:31971,estF:640,empF:5188},
+  "34":{mesh:"563960944",pop:1517,est:823,emp:13300,estF:215,empF:1806},
+  "35":{mesh:"523657931",pop:3179,est:271,emp:4440,estF:31,empF:378},
+  "36":{mesh:"533946214",pop:1004,est:1995,emp:39078,estF:248,empF:4322},
+  "37":{mesh:"523656414",pop:1410,est:57,emp:1209,estF:10,empF:69},
+  "38":{mesh:"523502874",pop:3094,est:272,emp:3764,estF:51,empF:394},
+  "40":{mesh:"523545193",pop:4479,est:207,emp:1641,estF:24,empF:194},
+  "41":{mesh:"523657923",pop:1800,est:721,emp:13061,estF:164,empF:1515},
+  "42":{mesh:"523657721",pop:2279,est:727,emp:11384,estF:172,empF:2905},
+  "43":{mesh:"533946304",pop:2133,est:1242,emp:21147,estF:155,empF:1239},
+  "44":{mesh:"523716502",pop:64,est:44,emp:543,estF:7,empF:74},
+  "45":{mesh:"523657973",pop:3352,est:303,emp:2491,estF:40,empF:428},
+  "46":{mesh:"523667021",pop:405,est:1590,emp:31971,estF:640,empF:5188}
 };
 
 const stores = [
@@ -320,12 +328,14 @@ stores.forEach(s => {
 
 function getMarkerColor(store) {
   if (store.closed) return '#999';
-  if (!store.pop) return '#d32f2f';
-  const d = store.pop.day;
-  if (d >= 500000) return '#b71c1c';
-  if (d >= 200000) return '#d32f2f';
-  if (d >= 100000) return '#f57c00';
-  return '#fbc02d';
+  if (!store.mesh) return '#d32f2f';
+  // マーカー色は 500m昼間人口(概算) = 居住+従業者 ベース
+  const d = store.mesh.pop + store.mesh.emp;
+  if (d >= 30000) return '#b71c1c';
+  if (d >= 10000) return '#d32f2f';
+  if (d >= 5000) return '#f57c00';
+  if (d >= 2000) return '#fbc02d';
+  return '#9e9d24';
 }
 
 function getRatioColor(ratio) {
@@ -419,17 +429,43 @@ function showSidebar(store) {
   let meshHtml = '';
   if (store.mesh) {
     const m = store.mesh;
+    // 昼間人口の簡易指標 = 居住人口 + 事業所従業者数 (昼間にその場にいる人数の近似)
+    const dayEst = m.pop + m.emp;
     meshHtml = `
       <div class="pop-card" style="border-left-color:#1976d2;margin-bottom:12px;">
-        <h4 style="color:#1976d2;">📍 店舗周辺 500mメッシュ 居住人口</h4>
-        <div class="pop-grid" style="grid-template-columns:1fr;">
-          <div class="pop-item" style="background:#e3f2fd;">
-            <div class="val" style="color:#1976d2;">${m.pop.toLocaleString()}<span style="font-size:12px;color:#666;"> 人</span></div>
-            <div class="lbl">500m × 500m 四方の居住人口</div>
-          </div>
+        <h4 style="color:#1976d2;">📍 店舗周辺 500m×500m メッシュデータ</h4>
+        <div style="font-size:11px;color:#666;margin-bottom:8px;">(店舗を中心とした約500m四方の範囲)</div>
+
+        <div style="background:#fff3e0;border:1px solid #ffb74d;padding:10px;border-radius:6px;margin-bottom:10px;">
+          <div style="font-size:11px;color:#e65100;font-weight:bold;">☀️ 昼間人口(概算) = 居住者 + 働く人</div>
+          <div style="font-size:22px;font-weight:bold;color:#e65100;">${dayEst.toLocaleString()}<span style="font-size:12px;color:#666;"> 人</span></div>
+          <div style="font-size:10px;color:#999;">※店前人口の参考指標</div>
         </div>
-        <div class="pop-note">メッシュコード: ${m.mesh} (4次地域メッシュ)</div>
-        <div class="pop-note">出典: e-Stat 令和2年国勢調査 4次メッシュ 人口等基本集計</div>
+
+        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+          <tr style="background:#e3f2fd;">
+            <td style="padding:8px;border:1px solid #bbdefb;"><strong>🏠 居住人口(夜間)</strong><br><span style="font-size:10px;color:#666;">500m圏内に住んでいる人</span></td>
+            <td style="padding:8px;border:1px solid #bbdefb;text-align:right;font-size:18px;font-weight:bold;color:#1976d2;">${m.pop.toLocaleString()}<span style="font-size:11px;"> 人</span></td>
+          </tr>
+          <tr>
+            <td style="padding:8px;border:1px solid #eee;"><strong>💼 事業所従業者数</strong><br><span style="font-size:10px;color:#666;">500m圏内で働いている人</span></td>
+            <td style="padding:8px;border:1px solid #eee;text-align:right;font-size:18px;font-weight:bold;color:#d84315;">${m.emp.toLocaleString()}<span style="font-size:11px;"> 人</span></td>
+          </tr>
+          <tr style="background:#fafafa;">
+            <td style="padding:8px;border:1px solid #eee;"><strong>🏢 総事業所数</strong><br><span style="font-size:10px;color:#666;">500m圏内の事業所の数</span></td>
+            <td style="padding:8px;border:1px solid #eee;text-align:right;font-size:16px;font-weight:bold;">${m.est.toLocaleString()}<span style="font-size:11px;"> 件</span></td>
+          </tr>
+          <tr style="background:#fff8e1;">
+            <td style="padding:8px;border:1px solid #ffe082;"><strong>🍜 飲食店従業者数</strong><br><span style="font-size:10px;color:#666;">500m圏内の飲食業で働く人</span></td>
+            <td style="padding:8px;border:1px solid #ffe082;text-align:right;font-size:16px;font-weight:bold;color:#ff6f00;">${m.empF.toLocaleString()}<span style="font-size:11px;"> 人</span></td>
+          </tr>
+          <tr style="background:#fff8e1;">
+            <td style="padding:8px;border:1px solid #ffe082;"><strong>🥢 飲食店数(競合)</strong><br><span style="font-size:10px;color:#666;">500m圏内の飲食店の数</span></td>
+            <td style="padding:8px;border:1px solid #ffe082;text-align:right;font-size:16px;font-weight:bold;color:#ff6f00;">${m.estF.toLocaleString()}<span style="font-size:11px;"> 店</span></td>
+          </tr>
+        </table>
+        <div class="pop-note" style="margin-top:8px;">メッシュコード: ${m.mesh} (4次地域メッシュ)</div>
+        <div class="pop-note">出典: 令和2年国勢調査(居住人口) / 令和3年経済センサス(事業所・従業者)</div>
       </div>`;
   }
 
@@ -498,14 +534,19 @@ function renderList() {
   });
 
   // Sort
+  const dayEst = (s) => s.mesh ? (s.mesh.pop + s.mesh.emp) : 0;
   filtered.sort((a, b) => {
     switch(currentSort) {
-      case 'mesh_desc': return (b.mesh?.pop || 0) - (a.mesh?.pop || 0);
-      case 'mesh_asc': return (a.mesh?.pop || 0) - (b.mesh?.pop || 0);
+      case 'dayEst_desc': return dayEst(b) - dayEst(a);
+      case 'dayEst_asc': return dayEst(a) - dayEst(b);
+      case 'emp_desc': return (b.mesh?.emp || 0) - (a.mesh?.emp || 0);
+      case 'emp_asc': return (a.mesh?.emp || 0) - (b.mesh?.emp || 0);
+      case 'pop_desc': return (b.mesh?.pop || 0) - (a.mesh?.pop || 0);
+      case 'pop_asc': return (a.mesh?.pop || 0) - (b.mesh?.pop || 0);
+      case 'estF_desc': return (b.mesh?.estF || 0) - (a.mesh?.estF || 0);
+      case 'estF_asc': return (a.mesh?.estF || 0) - (b.mesh?.estF || 0);
       case 'day_desc': return (b.pop?.day || 0) - (a.pop?.day || 0);
       case 'day_asc': return (a.pop?.day || 0) - (b.pop?.day || 0);
-      case 'ratio_desc': return (b.pop?.ratio || 0) - (a.pop?.ratio || 0);
-      case 'ratio_asc': return (a.pop?.ratio || 0) - (b.pop?.ratio || 0);
       default: return parseInt(a.num) - parseInt(b.num);
     }
   });
@@ -513,17 +554,19 @@ function renderList() {
   filtered.forEach(s => {
     const div = document.createElement('div');
     div.className = 'store-item' + (s.closed ? ' closed' : '');
+    const dayEstVal = s.mesh ? (s.mesh.pop + s.mesh.emp) : 0;
     const meshText = s.mesh
-      ? `📍 500m圏内 居住人口 ${s.mesh.pop.toLocaleString()}人`
+      ? `<div class="pop-info" style="color:#e65100;font-weight:bold;">☀️ 500m昼間人口(概算) ${dayEstVal.toLocaleString()}人</div>
+         <div class="pop-info" style="color:#666;font-size:11px;">　┗ 居住${s.mesh.pop.toLocaleString()}+従業者${s.mesh.emp.toLocaleString()}人 / 飲食店${s.mesh.estF}店</div>`
       : '';
     const popText = s.pop
-      ? `📊 ${s.muni} 昼間人口 ${s.pop.day.toLocaleString()}人 (昼夜比${s.pop.ratio}%)`
+      ? `<div class="pop-info">📊 ${s.muni}(市区町村) 昼間人口${s.pop.day.toLocaleString()}人</div>`
       : '';
     div.innerHTML = `
       <div class="name">No.${s.num} ${s.name}</div>
       <div class="addr">${s.addr}</div>
-      ${meshText ? `<div class="pop-info" style="color:#1976d2;">${meshText}</div>` : ''}
-      ${popText ? `<div class="pop-info">${popText}</div>` : ''}
+      ${meshText}
+      ${popText}
     `;
     div.onclick = () => {
       if (s.lat) {
