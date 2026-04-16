@@ -172,6 +172,11 @@ body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; }
   <div class="legend-item"><span class="legend-circle" style="background:#fbc02d"></span>2,000〜5,000人</div>
   <div class="legend-item"><span class="legend-circle" style="background:#9e9d24"></span>2,000人未満</div>
   <div class="legend-item"><span class="legend-circle" style="background:#999"></span>閉店</div>
+  <hr style="margin:8px 0;border:none;border-top:1px solid #eee;">
+  <div style="font-size:11px;color:#666;margin-bottom:4px;">クリック時に表示:</div>
+  <div class="legend-item"><span style="display:inline-block;width:14px;height:14px;border:2px solid #1976d2;background:rgba(33,150,243,0.12);border-radius:50%;margin-right:8px;"></span>500m商圏</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#4caf50"></span>🚉 最寄り駅</div>
+  <div class="legend-item"><span class="legend-circle" style="background:#ff9800"></span>🍜 競合店</div>
 </div>
 
 <div class="sidebar" id="sidebar">
@@ -346,9 +351,12 @@ function getRatioColor(ratio) {
   return '#757575';
 }
 
-let map, markers = [], infoWindow, geocoder;
+let map, markers = [], infoWindow, geocoder, placesService;
 let currentFilter = 'all';
 let currentSort = 'num';
+let tradeCircle = null;
+let competitorMarkers = [];
+let stationMarker = null;
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -361,6 +369,7 @@ function initMap() {
   });
   geocoder = new google.maps.Geocoder();
   infoWindow = new google.maps.InfoWindow();
+  placesService = new google.maps.places.PlacesService(map);
 
   const bounds = new google.maps.LatLngBounds();
   let geocodeIdx = 0;
@@ -419,7 +428,145 @@ function initMap() {
   updateStats();
 }
 
+// 商圏円・競合・駅のクリア
+function clearOverlays() {
+  if (tradeCircle) { tradeCircle.setMap(null); tradeCircle = null; }
+  if (stationMarker) { stationMarker.setMap(null); stationMarker = null; }
+  competitorMarkers.forEach(m => m.setMap(null));
+  competitorMarkers = [];
+}
+
+// 500m商圏円を描画
+function drawTradeArea(lat, lng) {
+  tradeCircle = new google.maps.Circle({
+    strokeColor: '#1976d2',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#2196f3',
+    fillOpacity: 0.12,
+    map: map,
+    center: { lat, lng },
+    radius: 500,
+    clickable: false
+  });
+}
+
+// 最寄り駅検索
+function findNearestStation(lat, lng, callback) {
+  placesService.nearbySearch({
+    location: new google.maps.LatLng(lat, lng),
+    rankBy: google.maps.places.RankBy.DISTANCE,
+    type: 'train_station',
+    language: 'ja'
+  }, function(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
+      const station = results[0];
+      const stLat = station.geometry.location.lat();
+      const stLng = station.geometry.location.lng();
+      // Haversine距離計算 (m)
+      const R = 6371000;
+      const dLat = (stLat - lat) * Math.PI / 180;
+      const dLng = (stLng - lng) * Math.PI / 180;
+      const a = Math.sin(dLat/2)**2 + Math.cos(lat * Math.PI/180) * Math.cos(stLat * Math.PI/180) * Math.sin(dLng/2)**2;
+      const distance = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+      const walkMin = Math.ceil(distance / 80); // 徒歩80m/分
+
+      // 駅マーカー
+      stationMarker = new google.maps.Marker({
+        position: station.geometry.location,
+        map: map,
+        icon: {
+          path: 'M12 2C8 2 4 4 4 8v8c0 2 2 4 4 4l-2 2v1h12v-1l-2-2c2 0 4-2 4-4V8c0-4-4-6-8-6z',
+          fillColor: '#4caf50',
+          fillOpacity: 1,
+          strokeColor: '#fff',
+          strokeWeight: 2,
+          scale: 1.2,
+          anchor: new google.maps.Point(12, 24)
+        },
+        title: station.name + ' (最寄り駅)',
+        zIndex: 1000
+      });
+      callback({name: station.name, distance, walkMin});
+    } else {
+      callback(null);
+    }
+  });
+}
+
+// 500m以内のラーメン屋検索
+function findNearbyRamen(lat, lng, excludeName, callback) {
+  placesService.nearbySearch({
+    location: new google.maps.LatLng(lat, lng),
+    radius: 500,
+    keyword: 'ラーメン',
+    type: 'restaurant',
+    language: 'ja'
+  }, function(results, status) {
+    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+      // 自店舗除外（名前の一部一致）
+      const filtered = results.filter(p => {
+        const n = p.name || '';
+        return !excludeName.split(' ').some(w => w.length >= 2 && n.includes(w));
+      });
+      // 距離計算
+      const R = 6371000;
+      filtered.forEach(p => {
+        const pLat = p.geometry.location.lat();
+        const pLng = p.geometry.location.lng();
+        const dLat = (pLat - lat) * Math.PI / 180;
+        const dLng = (pLng - lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat * Math.PI/180) * Math.cos(pLat * Math.PI/180) * Math.sin(dLng/2)**2;
+        p._distance = Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+      });
+      filtered.sort((a, b) => a._distance - b._distance);
+
+      // 競合マーカー
+      filtered.forEach((p, i) => {
+        const marker = new google.maps.Marker({
+          position: p.geometry.location,
+          map: map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: '#ff9800',
+            fillOpacity: 0.9,
+            strokeColor: '#fff',
+            strokeWeight: 2,
+            scale: 7
+          },
+          label: {
+            text: '🍜',
+            fontSize: '11px'
+          },
+          title: `${p.name} (${p._distance}m)`,
+          zIndex: 500
+        });
+        marker.addListener('click', () => {
+          infoWindow.setContent(`
+            <div style="font-size:13px;">
+              <strong>${p.name}</strong><br>
+              ★ ${p.rating || 'N/A'} (${p.user_ratings_total || 0}件)<br>
+              距離: ${p._distance}m<br>
+              ${p.vicinity || ''}
+            </div>`);
+          infoWindow.open(map, marker);
+        });
+        competitorMarkers.push(marker);
+      });
+      callback(filtered);
+    } else {
+      callback([]);
+    }
+  });
+}
+
 function showSidebar(store) {
+  // 商圏円・競合・駅をクリアして再描画
+  clearOverlays();
+  if (store.lat && store.lng) {
+    drawTradeArea(store.lat, store.lng);
+  }
+
   const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.name + ' ' + store.addr)}`;
   document.getElementById('sidebarTitle').textContent = store.name;
   const statusBadge = store.closed
@@ -511,10 +658,86 @@ function showSidebar(store) {
     <a href="${gmapsUrl}" target="_blank" class="google-link">Google Maps で開く</a>
     <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(store.addr)}"
        target="_blank" class="google-link" style="background:#34a853;margin-left:8px;">ルート検索</a>
+    <div id="stationInfo"></div>
     ${meshHtml}
+    <div id="competitorInfo"></div>
     ${popHtml}
   `;
   document.getElementById('sidebar').classList.add('open');
+
+  // 非同期で駅・競合店情報を取得
+  if (store.lat && store.lng) {
+    document.getElementById('stationInfo').innerHTML = `
+      <div class="pop-card" style="border-left-color:#4caf50;margin-top:12px;">
+        <h4 style="color:#4caf50;">🚉 最寄り駅</h4>
+        <div style="font-size:13px;color:#666;">検索中...</div>
+      </div>`;
+
+    findNearestStation(store.lat, store.lng, function(stInfo) {
+      const el = document.getElementById('stationInfo');
+      if (!el) return;
+      if (stInfo) {
+        el.innerHTML = `
+          <div class="pop-card" style="border-left-color:#4caf50;margin-top:12px;">
+            <h4 style="color:#4caf50;">🚉 最寄り駅</h4>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="font-size:24px;font-weight:bold;color:#4caf50;">${stInfo.name}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+              <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center;">
+                <div style="font-size:18px;font-weight:bold;color:#2e7d32;">${stInfo.distance}m</div>
+                <div style="font-size:10px;color:#666;">直線距離</div>
+              </div>
+              <div style="background:#e8f5e9;padding:8px;border-radius:6px;text-align:center;">
+                <div style="font-size:18px;font-weight:bold;color:#2e7d32;">徒歩${stInfo.walkMin}分</div>
+                <div style="font-size:10px;color:#666;">(80m/分換算)</div>
+              </div>
+            </div>
+          </div>`;
+      } else {
+        el.innerHTML = `
+          <div class="pop-card" style="border-left-color:#4caf50;margin-top:12px;">
+            <h4 style="color:#4caf50;">🚉 最寄り駅</h4>
+            <div style="font-size:13px;color:#999;">近くに駅が見つかりませんでした</div>
+          </div>`;
+      }
+    });
+
+    document.getElementById('competitorInfo').innerHTML = `
+      <div class="pop-card" style="border-left-color:#ff9800;margin-top:12px;">
+        <h4 style="color:#ff9800;">🍜 500m圏内 ラーメン競合店</h4>
+        <div style="font-size:13px;color:#666;">検索中...</div>
+      </div>`;
+
+    findNearbyRamen(store.lat, store.lng, store.name, function(competitors) {
+      const el = document.getElementById('competitorInfo');
+      if (!el) return;
+      if (competitors.length === 0) {
+        el.innerHTML = `
+          <div class="pop-card" style="border-left-color:#ff9800;margin-top:12px;">
+            <h4 style="color:#ff9800;">🍜 500m圏内 ラーメン競合店</h4>
+            <div style="font-size:13px;color:#4caf50;font-weight:bold;">✨ 半径500m以内に競合なし（ブルーオーシャン）</div>
+          </div>`;
+      } else {
+        const list = competitors.map(p => `
+          <div style="padding:8px;border-bottom:1px solid #eee;font-size:12px;">
+            <div style="font-weight:bold;">${p.name}</div>
+            <div style="color:#666;">
+              📍 ${p._distance}m ・ ★${p.rating || 'N/A'} (${p.user_ratings_total || 0}件)
+            </div>
+          </div>`).join('');
+        el.innerHTML = `
+          <div class="pop-card" style="border-left-color:#ff9800;margin-top:12px;">
+            <h4 style="color:#ff9800;">🍜 500m圏内 ラーメン競合店</h4>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:14px;font-weight:bold;color:#ff6f00;">${competitors.length}店舗</span>
+              <span style="font-size:11px;color:#999;">※自店除く(Google Places)</span>
+            </div>
+            <div style="max-height:240px;overflow-y:auto;background:#fff8e1;border-radius:6px;">${list}</div>
+          </div>`;
+      }
+    });
+  }
 }
 
 function closeSidebar() {
@@ -615,7 +838,7 @@ function togglePanel() {
 renderList();
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnK1j8iAoBggsdjUkXRzLrR6ok32bNA9w&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCnK1j8iAoBggsdjUkXRzLrR6ok32bNA9w&libraries=places&callback=initMap" async defer></script>
 
 </body>
 </html>
