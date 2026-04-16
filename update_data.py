@@ -79,6 +79,28 @@ def fetch(url):
         return json.loads(r.read())
 
 
+def get_self(name, lat, lng):
+    """店舗自身のGoogle Places情報を取得 (★, レビュー数)"""
+    # Find Place From Text で place_id 検索
+    query = f"{name} {lat},{lng}"
+    url = (f"https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
+           f"?input={query}&inputtype=textquery"
+           f"&fields=place_id,name,rating,user_ratings_total,formatted_address"
+           f"&locationbias=point:{lat},{lng}"
+           f"&language=ja&key={API_KEY}")
+    d = fetch(url)
+    if d.get('status') == 'OK' and d.get('candidates'):
+        c = d['candidates'][0]
+        return {
+            'place_id': c.get('place_id', ''),
+            'google_name': c.get('name', ''),
+            'rating': c.get('rating'),
+            'reviews': c.get('user_ratings_total'),
+            'address': c.get('formatted_address', '')
+        }
+    return None
+
+
 def get_station(lat, lng):
     url = (f"https://maps.googleapis.com/maps/api/place/nearbysearch/json"
            f"?location={lat},{lng}&rankby=distance&type=train_station"
@@ -149,19 +171,23 @@ def main():
         key = str(num)
         print(f"[{i}/{total}] No.{num} {name}...")
         try:
+            self_info = get_self(name, lat, lng)
+            time.sleep(0.2)
             station = get_station(lat, lng)
             time.sleep(0.2)
             ramen = get_ramen(lat, lng, name)
             time.sleep(0.2)
             cache[key] = {
+                'self': self_info,
                 'station': station,
                 'ramen': ramen
             }
+            rating = f"★{self_info['rating']}({self_info['reviews']}件)" if self_info and self_info.get('rating') else '-'
             st = f"{station['name']} ({station['distance']}m)" if station else 'N/A'
-            print(f"  駅: {st} / 競合: {len(ramen)}店")
+            print(f"  評価: {rating} / 駅: {st} / 競合: {len(ramen)}店")
         except Exception as e:
             print(f"  ERROR: {e}")
-            cache[key] = {'station': None, 'ramen': []}
+            cache[key] = {'self': None, 'station': None, 'ramen': []}
 
     # Save cache
     cache['_updated'] = time.strftime('%Y-%m-%d %H:%M:%S')
